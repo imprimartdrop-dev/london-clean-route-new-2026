@@ -72,7 +72,8 @@ async function rest<T>(path:string,opts:RequestInit={}):Promise<T>{
   }});
   if(!response.ok) throw new Error("LCR database request failed: "+response.status);
   if(response.status===204) return undefined as T;
-  return await response.json() as T;
+  const body=await response.text();
+  return (body?JSON.parse(body):undefined) as T;
 }
 const corsHeaders = (origin:string|null)=>{
   const allowed=Deno.env.get("PUBLIC_SITE_ORIGIN");
