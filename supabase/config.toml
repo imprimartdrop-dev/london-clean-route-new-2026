@@ -1,0 +1,7 @@
+# London Clean Route only: public webhooks are validated in their own handlers.
+# Do not point these functions at any existing renovation Supabase project.
+[functions.telegram-webhook]
+verify_jwt = false
+
+[functions.submit-cleaning-enquiry]
+verify_jwt = false
