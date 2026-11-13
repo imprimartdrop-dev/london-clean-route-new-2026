@@ -41,7 +41,8 @@ async function rest<T>(path: string, opts: RequestInit = {}): Promise<T> {
   });
   if (!response.ok) throw new Error("LCR REST " + response.status);
   if (response.status === 204) return undefined as T;
-  return await response.json() as T;
+  const body = await response.text();
+  return (body ? JSON.parse(body) : undefined) as T;
 }
 async function telegramCall(method: string, payload: Record<string, unknown>): Promise<any> {
   const res = await fetch("https://api.telegram.org/bot" + botToken() + "/" + method, {
