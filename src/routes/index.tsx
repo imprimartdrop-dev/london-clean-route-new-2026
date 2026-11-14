@@ -13,8 +13,8 @@ import type { QuoteInput } from "../lib/quote";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "London Clean Route | Professional Cleaning Services in North West London" },
-      { name: "description", content: "Thoughtful home cleaning, end of tenancy, deep cleans and Airbnb changeovers in North West London. Explore our services and request a free, no-obligation quote." },
+      { title: "London Clean Route | Professional Cleaning Services Across London" },
+      { name: "description", content: "Professional home and commercial cleaning, end of tenancy, deep cleans, office cleaning and Airbnb changeovers across Greater London. Explore our services and request a free, no-obligation quote." },
       { property: "og:title", content: "London Clean Route — Cleaning, thoughtfully done" },
       { property: "og:description", content: "Professional cleaning for London homes, tenants and businesses." },
     ],
@@ -182,7 +182,7 @@ function QuoteWizard() {
                 {(["once","weekly","fortnightly","monthly","unsure"] as const).map(k=><option key={k} value={k}>{t(("q.freq." + k) as DictKey)}</option>)}
               </select>
             </label>
-            <label className="block"><span className="lcr-label">{t("q.postcode")}</span><input autoComplete="postal-code" className={inputClass} value={draft.postcode} onChange={e=>change("postcode",e.target.value)} onBlur={()=>change("postcode",normalisePostcode(draft.postcode))} placeholder="NW10 5NH"/></label>
+            <label className="block"><span className="lcr-label">{t("q.postcode")}</span><input autoComplete="postal-code" className={inputClass} value={draft.postcode} onChange={e=>change("postcode",e.target.value)} onBlur={()=>change("postcode",normalisePostcode(draft.postcode))} placeholder="SW11 3RA"/></label>
             <label className="block"><span className="lcr-label">{t("q.date")}</span><input className={inputClass} type="date" min={new Date().toISOString().slice(0,10)} value={draft.date} onChange={e=>change("date",e.target.value)}/></label>
             <label className="block"><span className="lcr-label">{t("q.window")}</span>
               <select className={inputClass} value={draft.timeWindow} onChange={e=>change("timeWindow",e.target.value as Draft["timeWindow"])}>
@@ -250,7 +250,7 @@ function HomePage() {
         <div className="lcr-hero__shade" aria-hidden="true"/>
         <div className="container-page relative z-10 flex items-center min-h-[620px] py-24 md:py-32">
           <div className="max-w-[740px] animate-rise">
-            <div className="lcr-hero__eyebrow"><span className="lcr-dot"/>{lang==="en"?"NORTH WEST LONDON · HOME & COMMERCIAL CLEANING":"NOROESTE DE LONDRES · LIMPEZA RESIDENCIAL E COMERCIAL"}</div>
+            <div className="lcr-hero__eyebrow"><span className="lcr-dot"/>{lang==="en"?"ACROSS LONDON · HOME & COMMERCIAL CLEANING":"TODA LONDRES · LIMPEZA RESIDENCIAL E COMERCIAL"}</div>
             <h1 className="lcr-hero__title">{lang==="en"?"A cleaner home. A little more room to breathe.":"Sua casa limpa. Mais tempo para aproveitar."}</h1>
             <p className="lcr-hero__lead">{lang==="en"?"Thoughtfully delivered cleaning for London homes, workplaces and spaces between chapters. Because the details make all the difference.":"Limpeza feita com atenção para casas, escritórios e imóveis em Londres. Porque cada detalhe faz a diferença."}</p>
             <div className="mt-9 flex flex-wrap items-center gap-4">
@@ -266,7 +266,7 @@ function HomePage() {
         <div className="container-page grid gap-8 md:grid-cols-3">
           <div><ShieldCheck size={22}/><span>{lang==="en"?"Carefully considered service":"Atendimento cuidadoso"}</span></div>
           <div><Sparkles size={22}/><span>{lang==="en"?"A beautifully refreshed space":"Ambientes renovados"}</span></div>
-          <div><MapPin size={22}/><span>{lang==="en"?"Starting in North West London":"Começando pelo noroeste de Londres"}</span></div>
+          <div><MapPin size={22}/><span>{lang==="en"?"Serving all of London":"Atendemos toda Londres"}</span></div>
         </div>
       </section>
 
@@ -318,7 +318,7 @@ function HomePage() {
       </section>
 
       <section id="areas" className="lcr-section container-page">
-        <div className="lcr-section-heading"><div><p className="eyebrow">{lang==="en"?"LOCAL BY DESIGN":"ATENDIMENTO POR REGIÃO"}</p><h2>{t("home.areasTitle")}</h2></div><p>{t("home.areasLead")}</p></div>
+        <div className="lcr-section-heading"><div><p className="eyebrow">{lang==="en"?"COVERING ALL LONDON":"ATENDIMENTO POR REGIÃO"}</p><h2>{t("home.areasTitle")}</h2></div><p>{t("home.areasLead")}</p></div>
         <div className="lcr-areas">{INITIAL_AREAS.map(a=><span key={a.district}><MapPin size={15}/><b>{a.district}</b> {a.name}</span>)}</div>
         <p className="text-sm text-muted-foreground mt-5">{t("areas.disclaimer")}</p>
       </section>
