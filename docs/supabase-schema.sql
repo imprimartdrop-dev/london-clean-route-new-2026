@@ -1,5 +1,8 @@
--- DRAFT ONLY — NOT APPLIED. For a brand-new, separate backend project.
--- Do not run against any existing project. Review before use.
+-- GOODSPOTLESS ONLY — one-time installation of the initial schema.
+-- Execute only in the brand-new GOODSPOTLESS project: hrypzfgvjlniuhnglmzm.
+-- Do not run against CWX or any existing project. Review database target before Run.
+-- The explicit transaction prevents partial installation if a statement fails.
+begin;
 
 create table public.service_areas (
   id uuid primary key default gen_random_uuid(),
@@ -130,3 +133,5 @@ create policy "admins manage events" on public.quote_events for all to authentic
 create policy "admins manage availability" on public.availability for all to authenticated using ((select private.has_role('admin'::public.app_role))) with check ((select private.has_role('admin'::public.app_role)));
 create policy "admins manage jobs" on public.jobs for all to authenticated using ((select private.has_role('admin'::public.app_role))) with check ((select private.has_role('admin'::public.app_role)));
 create policy "users read own roles" on public.user_roles for select to authenticated using (user_id = auth.uid());
+
+commit;
