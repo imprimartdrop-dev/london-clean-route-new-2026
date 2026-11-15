@@ -1,5 +1,5 @@
 /**
- * London Clean Route only: public enquiry intake for a NEW LCR Supabase project.
+ * GOODSPOTLESS only: public enquiry intake for a NEW LCR Supabase project.
  *
  * NOT PRODUCTION-READY UNTIL separate project, Turnstile, rate limiting, privacy
  * notice, secrets, and complete E2E tests have been configured. Do not activate
@@ -102,7 +102,7 @@ async function sendBot(enquiry:Enquiry):Promise<number>{
   const bot=required("TELEGRAM_BOT_TOKEN");
   const chat=required("TELEGRAM_ADMIN_CHAT_ID");
   const detail = [
-    "🧹 NEW LONDON CLEAN ROUTE ENQUIRY",
+    "🧹 NEW GOODSPOTLESS ENQUIRY",
     "🔖 Ref: "+enquiry.reference,
     "🙋 Name: "+enquiry.name,
     "📞 Phone: "+enquiry.phone_e164,
