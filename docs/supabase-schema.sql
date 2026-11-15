@@ -103,12 +103,12 @@ create or replace function private.has_role(_role public.app_role)
 returns boolean
 language sql stable security definer
 set search_path = ''
-as $
+as $role_check$
   select exists (
     select 1 from public.user_roles
     where user_id = (select auth.uid()) and role = _role
   )
-$;
+$role_check$;
 revoke all on function private.has_role(public.app_role) from public, anon, authenticated;
 grant execute on function private.has_role(public.app_role) to authenticated;
 
