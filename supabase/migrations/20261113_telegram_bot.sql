@@ -1,7 +1,8 @@
--- London Clean Route ONLY — optional Telegram add-on migration.
--- Apply ONLY to a brand-new LCR Supabase project, AFTER docs/supabase-schema.sql.
--- DO NOT apply to CWX Property Solutions / Proj-UK - Serviço OBRAS.
--- This file changes no databases until explicitly applied by the owner.
+-- GOODSPOTLESS ONLY: Telegram / quote workflow schema extension.
+-- Run ONLY in Supabase project hrypzfgvjlniuhnglmzm, AFTER docs/supabase-schema.sql.
+-- NEVER apply to any CWX / renovations project.
+-- First-run migration. Do not re-run after success without review.
+begin;
 
 alter table public.enquiries
   add column if not exists telegram_delivery_status text not null default 'pending',
@@ -48,3 +49,5 @@ on conflict(id) do nothing;
 -- Verify real administrator access, non-admin denial, private storage access,
 -- and webhook authentication before production.
 -- Telegram webhooks are guarded by TELEGRAM_WEBHOOK_SECRET, admin user and admin chat IDs.
+
+commit;
