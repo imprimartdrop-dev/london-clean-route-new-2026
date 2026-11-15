@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useId, useState, type PointerEvent } from "react";
+import { useEffect, useId, useRef, useState, type PointerEvent } from "react";
 import { ArrowRight, ArrowUpRight, Check, ChevronLeft, ChevronRight, ClipboardCheck, Clock3, Home as HomeIcon, MapPin, ShieldCheck, Sparkles, MoveHorizontal } from "lucide-react";
-import kitchenPhoto from "../assets/kitchen-detail.jpg";
+import roomBefore from "../assets/cleaner-room-before.webp";
+import roomAfter from "../assets/cleaner-room-after.webp";
 import livingPhoto from "../assets/hero-living-room.jpg";
 import bedroomPhoto from "../assets/bedroom-shortlet.jpg";
 import { useI18n, pick, type DictKey } from "../lib/i18n";
@@ -26,35 +27,102 @@ function BeforeAfter() {
   const { lang } = useI18n();
   const [split, setSplit] = useState(50);
   const id = useId();
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const introPlayed = useRef(false);
+  const frameRef = useRef<number | null>(null);
+
+  const stopIntro = () => {
+    introPlayed.current = true;
+    if (frameRef.current !== null) {
+      cancelAnimationFrame(frameRef.current);
+      frameRef.current = null;
+    }
+  };
+
+  useEffect(() => {
+    const element = sliderRef.current;
+    if (!element || typeof IntersectionObserver === "undefined" ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    // A single preview sweep on entering the viewport: centre → left → right → centre.
+    const points = [
+      { at: 0, value: 50 },
+      { at: 280, value: 50 },
+      { at: 960, value: 18 },
+      { at: 1780, value: 82 },
+      { at: 2660, value: 50 },
+    ];
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry?.isIntersecting || introPlayed.current) return;
+      introPlayed.current = true;
+      observer.disconnect();
+      const startedAt = performance.now();
+      const animate = (now: number) => {
+        const elapsed = Math.min(points[points.length - 1].at, now - startedAt);
+        if (elapsed >= points[points.length - 1].at) {
+          setSplit(50);
+          frameRef.current = null;
+          return;
+        }
+        let i = 1;
+        while (i < points.length - 1 && elapsed > points[i].at) i += 1;
+        const from = points[i - 1];
+        const to = points[i];
+        const progress = Math.max(0, Math.min(1, (elapsed - from.at) / (to.at - from.at)));
+        const eased = (1 - Math.cos(Math.PI * progress)) / 2;
+        setSplit(from.value + (to.value - from.value) * eased);
+        frameRef.current = requestAnimationFrame(animate);
+      };
+      frameRef.current = requestAnimationFrame(animate);
+    }, { threshold: 0.35 });
+    observer.observe(element);
+    return () => {
+      observer.disconnect();
+      if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+      frameRef.current = null;
+    };
+  }, []);
+
   const update = (event: PointerEvent<HTMLDivElement>) => {
     const rect = event.currentTarget.getBoundingClientRect();
-    if (rect.width > 0) setSplit(Math.max(0, Math.min(100, (event.clientX - rect.left) / rect.width * 100)));
+    if (rect.width > 0) {
+      setSplit(Math.max(0, Math.min(100, (event.clientX - rect.left) / rect.width * 100)));
+    }
   };
+
   return (
-    <div className="lcr-compare" onPointerDown={(event) => {
-      if (event.pointerType === "mouse" && event.button !== 0) return;
-      event.currentTarget.setPointerCapture(event.pointerId);
-      update(event);
-    }} onPointerMove={(event) => {
-      if (event.currentTarget.hasPointerCapture(event.pointerId)) update(event);
-    }} onPointerUp={(event) => {
-      if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
-    }}>
+    <div ref={sliderRef} className="lcr-compare" role="group"
+      aria-label={lang === "en" ? "Illustrative before and after cleaning comparison" : "Comparação ilustrativa de antes e depois da limpeza"}
+      onPointerDown={(event) => {
+        if (event.pointerType === "mouse" && event.button !== 0) return;
+        stopIntro();
+        event.currentTarget.setPointerCapture(event.pointerId);
+        update(event);
+      }}
+      onPointerMove={(event) => {
+        if (event.currentTarget.hasPointerCapture(event.pointerId)) update(event);
+      }}
+      onPointerUp={(event) => {
+        if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+      }}
+      onPointerCancel={(event) => {
+        if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+      }}>
       <div className="lcr-compare__after">
-        <img src={kitchenPhoto} alt={lang === "en" ? "Bright, clean contemporary kitchen" : "Cozinha contemporânea, clara e limpa"} draggable={false} />
+        <img src={roomAfter} alt={lang === "en" ? "The same London living room, clean and neatly arranged" : "A mesma sala, limpa e organizada"} draggable={false} loading="eager" />
       </div>
       <div className="lcr-compare__before" style={{ clipPath: "inset(0 " + (100 - split) + "% 0 0)" }}>
-        <img src={kitchenPhoto} alt="" draggable={false} />
-        <div className="lcr-compare__before-tint" aria-hidden="true" />
+        <img src={roomBefore} alt="" draggable={false} loading="eager" />
       </div>
       <span className="lcr-compare__tag lcr-compare__tag--before">{lang === "en" ? "BEFORE" : "ANTES"}</span>
       <span className="lcr-compare__tag lcr-compare__tag--after">{lang === "en" ? "AFTER" : "DEPOIS"}</span>
       <div className="lcr-compare__bar" style={{ left: split + "%" }} aria-hidden="true">
-        <span className="lcr-compare__handle"><MoveHorizontal size={24}/></span>
+        <span className="lcr-compare__handle"><MoveHorizontal size={24} /></span>
       </div>
-      <input id={id} type="range" min="0" max="100" value={split}
-        aria-label={lang === "en" ? "Slide to compare an illustrative room appearance" : "Arraste para comparar a aparência ilustrativa do ambiente"}
-        className="lcr-compare__range" onChange={(event) => setSplit(Number(event.target.value))} />
+      <input id={id} type="range" min="0" max="100" step="1" value={Math.round(split)}
+        aria-label={lang === "en" ? "Move left or right to compare before and after cleaning" : "Mova para esquerda ou direita para comparar antes e depois da limpeza"}
+        className="lcr-compare__range"
+        onChange={(event) => { stopIntro(); setSplit(Number(event.target.value)); }} />
     </div>
   );
 }
@@ -278,7 +346,7 @@ function HomePage() {
           <p>{lang==="en"?"Move the slider to see how a refreshed space can change the feeling of a room.":"Arraste o controle para visualizar a transformação de um ambiente renovado."}</p>
         </div>
         <BeforeAfter/>
-        <p className="lcr-illustration-note">{lang==="en"?"Illustrative demonstration using one photograph with a visual filter. Not a before-and-after from a real client; original paired cleaning photographs will replace it before launch.":"Demonstração ilustrativa com filtro visual em uma fotografia. Não representa um serviço real; fotos originais de antes e depois serão incluídas antes do lançamento."}</p>
+        <p className="lcr-illustration-note">{lang==="en"?"Illustrative before-and-after visualisation. These digitally staged images demonstrate the cleaning comparison and do not document a real client visit.":"Comparação ilustrativa de antes e depois. Estas imagens foram preparadas digitalmente para demonstrar a transformação e não documentam um atendimento real."}</p>
       </section>
 
       <section id="quote" className="lcr-quote-section">
