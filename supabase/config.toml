@@ -5,3 +5,7 @@ verify_jwt = false
 
 [functions.submit-cleaning-enquiry]
 verify_jwt = false
+
+# Temporary administrative setup; delete the deployed function after webhook registration.
+[functions.register-telegram-webhook]
+verify_jwt = false
