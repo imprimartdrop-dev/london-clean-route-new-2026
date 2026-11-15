@@ -1,4 +1,4 @@
-// London Clean Route Telegram webhook — NEW, independent bot only.
+// GOODSPOTLESS Telegram webhook — NEW, independent bot only.
 // Requires LCR-specific Supabase secrets and admin chat/user IDs.
 // No CWX URLs, tokens, project IDs or data are accepted.
 type Enquiry = {
@@ -65,12 +65,12 @@ function whatsappText(lead: Enquiry, intent: string) {
   const intro = [
     "Hello " + cleanText(lead.name,100) + ",",
     "",
-    "Thank you for contacting *London Clean Route*.",
+    "Thank you for contacting *GOODSPOTLESS*.",
     "🧹 *Cleaning:* " + cleanText(lead.service,120),
     "📍 *Area:* " + cleanText(lead.postcode,12),
     "🔖 *Reference:* " + cleanText(lead.reference,20),
   ];
-  const close = ["", "Kind regards,", "*London Clean Route*"];
+  const close = ["", "Kind regards,", "*GOODSPOTLESS*"];
   if (intent==="ask") return ["*A FEW MORE DETAILS 💬*", "", ...intro, "",
     "Could you please tell us more about the cleaning required, any priority rooms and access arrangements? That will help us prepare an accurate quote.", ...close].join("\n");
   if (intent==="decline") return ["*UPDATE ON YOUR REQUEST*", "", ...intro, "",
@@ -138,7 +138,7 @@ async function handleCallback(data: string, callbackId: string) {
 async function handleMessage(message: string) {
   const trimmed=message.trim();
   if (/^\/start(?:@\w+)?$/i.test(trimmed)){
-    await notify("🧹 London Clean Route admin bot is ready.\nCommands:\n/quote LCR-0001 250\n/book LCR-0001 2026-12-01 10:30\n\nButtons on new enquiries: Approve / Ask / Decline.\nWhatsApp messages are MANUAL.");
+    await notify("🧹 GOODSPOTLESS admin bot is ready.\nCommands:\n/quote LCR-0001 250\n/book LCR-0001 2026-12-01 10:30\n\nButtons on new enquiries: Approve / Ask / Decline.\nWhatsApp messages are MANUAL.");
     return;
   }
   const quote=/^\/quote(?:@\w+)?\s+(LCR-\d{4,})\s+(\d+(?:\.\d{1,2})?)$/i.exec(trimmed);
