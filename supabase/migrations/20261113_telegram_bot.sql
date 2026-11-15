@@ -43,6 +43,8 @@ values ('lcr-private-enquiry-photos', 'lcr-private-enquiry-photos', false, 83886
         array['image/jpeg','image/png','image/webp','image/heic','image/heif'])
 on conflict(id) do nothing;
 
--- Note: before production, migrate the original public.has_role() helper in
--- docs/supabase-schema.sql to an unexposed private schema and verify admin RLS.
+-- docs/supabase-schema.sql now places the admin authorization helper in
+-- private.has_role(), with execution restricted to authenticated users.
+-- Verify real administrator access, non-admin denial, private storage access,
+-- and webhook authentication before production.
 -- Telegram webhooks are guarded by TELEGRAM_WEBHOOK_SECRET, admin user and admin chat IDs.
