@@ -93,10 +93,24 @@ create table public.user_roles (
   role public.app_role not null,
   unique (user_id, role)
 );
-create or replace function public.has_role(_user_id uuid, _role public.app_role)
-returns boolean language sql stable security definer set search_path = public as $$
-  select exists (select 1 from public.user_roles where user_id = _user_id and role = _role)
-$$;
+-- Authorization helper lives in an unexposed schema, checks only the
+-- currently authenticated user, and has a restricted execution grant.
+create schema if not exists private;
+revoke all on schema private from public, anon, authenticated;
+grant usage on schema private to authenticated;
+
+create or replace function private.has_role(_role public.app_role)
+returns boolean
+language sql stable security definer
+set search_path = ''
+as $
+  select exists (
+    select 1 from public.user_roles
+    where user_id = (select auth.uid()) and role = _role
+  )
+$;
+revoke all on function private.has_role(public.app_role) from public, anon, authenticated;
+grant execute on function private.has_role(public.app_role) to authenticated;
 
 -- RLS everywhere. Public visitors get NO direct table access: enquiries are
 -- inserted by a server function (validation, rate limit, honeypot) using server credentials.
@@ -109,10 +123,10 @@ alter table public.jobs enable row level security;
 alter table public.user_roles enable row level security;
 
 create policy "public reads active areas" on public.service_areas for select to anon, authenticated using (active);
-create policy "admins manage areas" on public.service_areas for all to authenticated using (public.has_role(auth.uid(),'admin')) with check (public.has_role(auth.uid(),'admin'));
-create policy "admins manage enquiries" on public.enquiries for all to authenticated using (public.has_role(auth.uid(),'admin')) with check (public.has_role(auth.uid(),'admin'));
-create policy "admins manage photos" on public.enquiry_photos for all to authenticated using (public.has_role(auth.uid(),'admin')) with check (public.has_role(auth.uid(),'admin'));
-create policy "admins manage events" on public.quote_events for all to authenticated using (public.has_role(auth.uid(),'admin')) with check (public.has_role(auth.uid(),'admin'));
-create policy "admins manage availability" on public.availability for all to authenticated using (public.has_role(auth.uid(),'admin')) with check (public.has_role(auth.uid(),'admin'));
-create policy "admins manage jobs" on public.jobs for all to authenticated using (public.has_role(auth.uid(),'admin')) with check (public.has_role(auth.uid(),'admin'));
+create policy "admins manage areas" on public.service_areas for all to authenticated using ((select private.has_role('admin'::public.app_role))) with check ((select private.has_role('admin'::public.app_role)));
+create policy "admins manage enquiries" on public.enquiries for all to authenticated using ((select private.has_role('admin'::public.app_role))) with check ((select private.has_role('admin'::public.app_role)));
+create policy "admins manage photos" on public.enquiry_photos for all to authenticated using ((select private.has_role('admin'::public.app_role))) with check ((select private.has_role('admin'::public.app_role)));
+create policy "admins manage events" on public.quote_events for all to authenticated using ((select private.has_role('admin'::public.app_role))) with check ((select private.has_role('admin'::public.app_role)));
+create policy "admins manage availability" on public.availability for all to authenticated using ((select private.has_role('admin'::public.app_role))) with check ((select private.has_role('admin'::public.app_role)));
+create policy "admins manage jobs" on public.jobs for all to authenticated using ((select private.has_role('admin'::public.app_role))) with check ((select private.has_role('admin'::public.app_role)));
 create policy "users read own roles" on public.user_roles for select to authenticated using (user_id = auth.uid());
