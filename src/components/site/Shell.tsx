@@ -14,15 +14,18 @@ const NAV: { href: string; k: DictKey }[] = [
 export function LangToggle() {
   const { lang, setLang, t } = useI18n();
   return (
-    <div role="group" aria-label={t("lang.label")} className="flex items-center gap-1">
-      <button type="button" onClick={() => setLang("en")} aria-label="English (United Kingdom)" title="English (United Kingdom)"
-        aria-pressed={lang === "en"} className={"rounded-md px-2 py-1.5 text-xl transition-colors "+ (lang === "en" ? "bg-[#e1ebdf] ring-1 ring-[#74917c]" : "hover:bg-[#ebeee7] opacity-60")}>
-        <span aria-hidden="true">🇬🇧</span>
-      </button>
-      <button type="button" onClick={() => setLang("pt")} aria-label="Português (Brasil)" title="Português (Brasil)"
-        aria-pressed={lang === "pt"} className={"rounded-md px-2 py-1.5 text-xl transition-colors "+ (lang === "pt" ? "bg-[#e1ebdf] ring-1 ring-[#74917c]" : "hover:bg-[#ebeee7] opacity-60")}>
-        <span aria-hidden="true">🇧🇷</span>
-      </button>
+    <div role="group" aria-label={t("lang.label")} className="flex shrink-0 flex-col items-center gap-0.5">
+      <span className="text-[10px] sm:text-[11px] leading-tight font-semibold text-[#506a58] whitespace-nowrap">{t("lang.label")}</span>
+      <div className="flex items-center gap-1">
+        <button type="button" onClick={() => setLang("en")} aria-label="English (United Kingdom)" title="English (United Kingdom)"
+          aria-pressed={lang === "en"} className={"inline-flex items-center gap-1 rounded-md px-1.5 py-1 text-xs font-semibold transition-colors "+ (lang === "en" ? "bg-[#e1ebdf] ring-1 ring-[#74917c]" : "hover:bg-[#ebeee7] opacity-70")}>
+          <span aria-hidden="true" className="text-lg leading-none">🇬🇧</span><span>GB</span>
+        </button>
+        <button type="button" onClick={() => setLang("pt")} aria-label="Português (Brasil)" title="Português (Brasil)"
+          aria-pressed={lang === "pt"} className={"inline-flex items-center gap-1 rounded-md px-1.5 py-1 text-xs font-semibold transition-colors "+ (lang === "pt" ? "bg-[#e1ebdf] ring-1 ring-[#74917c]" : "hover:bg-[#ebeee7] opacity-70")}>
+          <span aria-hidden="true" className="text-lg leading-none">🇧🇷</span><span>BR</span>
+        </button>
+      </div>
     </div>
   );
 }
@@ -32,9 +35,9 @@ export function Header() {
   const [mobile, setMobile] = useState(false);
   return (
     <header className="sticky top-0 z-50 bg-[#fcfbf8]/95 backdrop-blur-lg border-b border-[#e0e7dc]">
-      <div className="container-page flex items-center justify-between gap-3 h-[76px]">
+      <div className="container-page flex items-center justify-between gap-2 sm:gap-3 min-h-[76px] py-2">
         <Link to="/" className="flex flex-col shrink-0 text-[#234737] leading-none">
-          <span className="font-display text-xl sm:text-2xl tracking-[-.03em]">London Clean Route</span>
+          <span className="font-display text-base min-[380px]:text-lg sm:text-2xl tracking-[-.03em]">London Clean Route</span>
           <span className="text-[9px] tracking-[.19em] mt-1.5 uppercase text-[#66816d]">{lang === "en" ? "Thoughtful cleaning" : "Limpeza com cuidado"}</span>
         </Link>
         <nav aria-label={lang === "en" ? "Primary navigation" : "Navegação principal"} className="hidden xl:flex items-center gap-6">
