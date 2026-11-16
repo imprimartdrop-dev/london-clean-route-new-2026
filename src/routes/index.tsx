@@ -15,9 +15,9 @@ import type { QuoteInput } from "../lib/quote";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "London Clean Route | Professional Cleaning Services Across London" },
+      { title: "GOODSPOTLESS | Professional Cleaning Services Across London" },
       { name: "description", content: "Professional home and commercial cleaning, end of tenancy, deep cleans, office cleaning and Airbnb changeovers across Greater London. Explore our services and request a free, no-obligation quote." },
-      { property: "og:title", content: "London Clean Route — Cleaning, thoughtfully done" },
+      { property: "og:title", content: "GOODSPOTLESS — Cleaning, thoughtfully done" },
       { property: "og:description", content: "Professional cleaning for London homes, tenants and businesses." },
     ],
   }),
