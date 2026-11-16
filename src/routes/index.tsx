@@ -148,6 +148,9 @@ function QuoteWizard() {
   const [step, setStep] = useState(1);
   const [draft, setDraft] = useState<Draft>(INITIAL);
   const [extras, setExtras] = useState<string[]>([]);
+  const [livingRooms, setLivingRooms] = useState(1);
+  const [kitchens, setKitchens] = useState(1);
+
   const [photos, setPhotos] = useState<File[]>([]);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -175,7 +178,7 @@ function QuoteWizard() {
   };
   const submit = async () => {
     if (busy) return;
-    const notes = [draft.notes, extras.length ? "Requested extras: " + extras.join(", ") : ""].filter(Boolean).join("\n");
+    const notes = [draft.notes, `Living rooms: ${livingRooms}`, `Kitchens: ${kitchens}`, extras.length ? "Requested extras: " + extras.join(", ") : ""].filter(Boolean).join("\n");
     const input = { ...draft, notes };
     const validation = quoteSchema.safeParse(input);
     if (!validation.success) { setError(t("q.error")); return; }
@@ -209,7 +212,7 @@ function QuoteWizard() {
       <h3 className="mt-4 text-3xl md:text-4xl">{resultKind === "live" ? (lang === "en" ? "Your request has been saved." : "Seu pedido foi registrado.") : t("q.previewDoneTitle")}</h3>
       <p className="mt-4 text-muted-foreground max-w-xl mx-auto">{resultKind === "live" ? (lang === "en" ? "We will review your request and contact you. No appointment is confirmed yet." : "Vamos analisar seu pedido e entrar em contato. Nenhum agendamento foi confirmado ainda.") : t("q.previewDoneText")}</p>
       <p className="mt-5 text-xl font-semibold">{reference}</p>
-      <button type="button" className="lcr-button mt-7" onClick={() => {setReference("");setDraft(INITIAL);setExtras([]);setPhotos([]);setStep(1);setReview(false);setStartedAt(Date.now());}}>
+      <button type="button" className="lcr-button mt-7" onClick={() => {setReference("");setDraft(INITIAL);setExtras([]);setLivingRooms(1);setKitchens(1);setPhotos([]);setStep(1);setReview(false);setStartedAt(Date.now());}}>
         {t("q.again")} <ArrowRight size={18}/>
       </button>
     </div>
@@ -256,6 +259,10 @@ function QuoteWizard() {
             <div className="grid grid-cols-2 gap-3">
               <label><span className="lcr-label">{t("q.bedrooms")}</span><select className={inputClass} value={draft.bedrooms} onChange={e=>change("bedrooms", Number(e.target.value))}>{Array.from({length:11}, (_,i)=><option key={i}>{i}</option>)}</select></label>
               <label><span className="lcr-label">{t("q.bathrooms")}</span><select className={inputClass} value={draft.bathrooms} onChange={e=>change("bathrooms", Number(e.target.value))}>{Array.from({length:11}, (_,i)=><option key={i}>{i}</option>)}</select></label>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <label><span className="lcr-label">{lang === "en" ? "Living rooms" : "Salas"}</span><select className={inputClass} value={livingRooms} onChange={e => setLivingRooms(Number(e.target.value))}>{Array.from({length:11}, (_,i) => <option key={i} value={i}>{i}</option>)}</select></label>
+              <label><span className="lcr-label">{lang === "en" ? "Kitchens" : "Cozinhas"}</span><select className={inputClass} value={kitchens} onChange={e => setKitchens(Number(e.target.value))}>{Array.from({length:11}, (_,i) => <option key={i} value={i}>{i}</option>)}</select></label>
             </div>
             <label className="block"><span className="lcr-label">{t("q.size")}</span><input className={inputClass} value={draft.sizeSqft} onChange={e=>change("sizeSqft",e.target.value)} inputMode="numeric" placeholder="e.g. 900"/></label>
           </div>}
