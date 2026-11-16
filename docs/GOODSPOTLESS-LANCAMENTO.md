@@ -14,14 +14,17 @@ Projeto autorizado: ONLY `imprimartdrop-dev/london-clean-route-new-2026`. Não e
 8. **Domínio.** Depois de testar a página e os formulários em `workers.dev`, adicionar o domínio REAL registrado na HostGator à Cloudflare; conferir previamente registros DNS e de e-mail; atualizar nameservers só no momento de apontar. Configurar site + www e HTTPS. Não assumir o nome de domínio sem confirmação do proprietário.
 9. **Testes de lançamento.** Usar dados fictícios: site → Supabase → alerta Telegram → aprovar / pedir detalhes / recusar → mensagem WhatsApp para enviar MANUALMENTE → registro atualizado → planilha. Testar falha de Telegram, proteção anti-spam, login admin e permissões RLS. Somente depois ativar formulários reais e anúncios.
 
-## Estado verificado em 2026-11-15
+## Estado atual — 2026-11-16 (confirmações do titular)
 
-- Código no GitHub, branch `main`, já sincronizada com Lovable.
-- Lovable projeto `97c7ba2e-a152-4ebb-8ec5-b150f4e1bdf0`; ainda não publicado.
-- Banco exclusivo de GOODSPOTLESS ainda NÃO criado. Apenas projetos prévios na organização Supabase existente; não tocá-los.
-- Funções e migrações do Telegram são rascunhos, não implantados.
-- Formulários ainda são simulações: não gravam pedidos nem notificam Telegram.
-- Nenhuma hospedagem Cloudflare, domínio nem planilha foram conectados automaticamente.
+- Projeto Supabase exclusivo GOODSPOTLESS: `hrypzfgvjlniuhnglmzm`, organização Moderna Barbearia, plano Free, região `eu-west-1` (Irlanda).
+- Dois scripts SQL foram executados pelo proprietário, com resposta `Success. No rows returned`. Ainda falta verificação de tabelas/políticas com acesso técnico autorizado.
+- Bot Telegram `@GoodspotlessLondonAdminBot` está respondendo ao comando `/start`; webhook `telegram-webhook` já foi publicado e configurado.
+- Função temporária `register-telegram-webhook` foi removida pelo proprietário após registrar o webhook.
+- Função de recebimento `submit-cleaning-enquiry` ainda NÃO foi publicada/validada. Sua API exige `PUBLIC_SITE_ORIGIN` e `TURNSTILE_SECRET_KEY` no Supabase e validação de origem + captcha.
+- Frontend agora possui adaptador de envio e widget Turnstile, mas permanece em **modo demonstração por padrão**. Só ativa fora do Lovable quando um build de hospedagem externa define `VITE_GOODSPOTLESS_LIVE=true` e `VITE_GOODSPOTLESS_TURNSTILE_SITE_KEY`. É proibido ativar antes dos testes de backend, antispam e privacidade.
+- Upload de fotos ainda indisponível em modo real; não descartar fotos dos clientes silenciosamente.
+- Site ainda não hospedado na Cloudflare nem apontado ao domínio, e planilhas Google Sheets não foram integradas.
+- CWX reformas é outro projeto: não alterar nada da CWX sem autorização expressa do titular.
 
 ## Regra de segurança e custos
 
