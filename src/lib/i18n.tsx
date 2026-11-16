@@ -8,7 +8,7 @@ export type Lang = "en" | "pt";
 const STORAGE_KEY = "lcr-lang";
 
 const en = {
-  "brand": "London Clean Route",
+  "brand": "GOODSPOTLESS",
   "nav.services": "Services", "nav.how": "How it works", "nav.areas": "Areas", "nav.faqs": "FAQs", "nav.contact": "Contact",
   "cta.quote": "Get a free cleaning quote", "cta.quoteShort": "Free quote", "cta.services": "Explore services",
   "lang.label": "Select language",
@@ -83,7 +83,7 @@ const en = {
 export type DictKey = keyof typeof en;
 
 const pt: Record<DictKey, string> = {
-  "brand": "London Clean Route",
+  "brand": "GOODSPOTLESS",
   "nav.services": "Serviços", "nav.how": "Como funciona", "nav.areas": "Regiões", "nav.faqs": "Dúvidas", "nav.contact": "Contato",
   "cta.quote": "Peça um orçamento grátis", "cta.quoteShort": "Orçamento", "cta.services": "Ver serviços",
   "lang.label": "Selecione o idioma",
