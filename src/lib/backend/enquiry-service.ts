@@ -1,24 +1,61 @@
 /**
- * Service locator. Today only the preview adapter exists: it validates locally,
- * stores NOTHING and sends NOTHING. Swap in a server-function-backed adapter
- * once a new, independent backend is configured (see README checklist).
+ * GOODSPOTLESS — preview stays active in Lovable. External hosting may switch
+ * to live ONLY after endpoint, verified Turnstile keys and production checks.
+ * No service-role key, Telegram token or customer database key belongs here.
  */
 import { formatReference, looksAutomated, quoteSchema } from "../quote";
 import type { EnquiryService, SubmitResult } from "./types";
+
+const GOODSPOTLESS_ENDPOINT =
+  "https://hrypzfgvjlniuhnglmzm.supabase.co/functions/v1/submit-cleaning-enquiry";
+export const TURNSTILE_SITE_KEY =
+  (import.meta.env.VITE_GOODSPOTLESS_TURNSTILE_SITE_KEY ?? "").trim();
+const liveConfigured =
+  import.meta.env.VITE_GOODSPOTLESS_LIVE === "true" &&
+  TURNSTILE_SITE_KEY.length > 0;
 
 let previewSeq = 0;
 
 const previewAdapter: EnquiryService = {
   mode: "preview",
   async submitEnquiry(input, meta): Promise<SubmitResult> {
-    // Same checks the future server function must repeat — never trust the client.
     if (!quoteSchema.safeParse(input).success) return { mode: "error", code: "validation" };
     if (looksAutomated(meta.startedAt, Date.now(), input.company)) return { mode: "error", code: "rate_limited" };
-    await new Promise((r) => setTimeout(r, 700)); // simulate latency so pending UI is exercised
+    await new Promise((r) => setTimeout(r, 700));
     previewSeq += 1;
     return { mode: "preview", reference: formatReference(previewSeq), delivered: false };
   },
 };
 
-export const enquiryService: EnquiryService = previewAdapter;
-export const INTEGRATION_PENDING = enquiryService.mode === "preview";
+const liveAdapter: EnquiryService = {
+  mode: "live",
+  async submitEnquiry(input, meta): Promise<SubmitResult> {
+    if (!quoteSchema.safeParse(input).success) return { mode: "error", code: "validation" };
+    if (looksAutomated(meta.startedAt, Date.now(), input.company)) return { mode: "error", code: "rate_limited" };
+    // The photos endpoint is not ready. Never silently discard customer attachments.
+    if (meta.photos.length || !meta.captchaToken) return { mode: "error", code: "unavailable" };
+
+    try {
+      const response = await fetch(GOODSPOTLESS_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...input, captchaToken: meta.captchaToken }),
+      });
+      if (response.status === 429) return { mode: "error", code: "rate_limited" };
+      if (!response.ok) return { mode: "error", code: "unavailable" };
+      const data: unknown = await response.json();
+      if (typeof data === "object" && data !== null && "stored" in data &&
+          data.stored === true && "reference" in data &&
+          typeof data.reference === "string" && data.reference.length <= 25) {
+        return { mode: "live", reference: data.reference, delivered: true };
+      }
+      return { mode: "error", code: "unavailable" };
+    } catch {
+      return { mode: "error", code: "unavailable" };
+    }
+  },
+};
+
+export const enquiryService: EnquiryService =
+  liveConfigured ? liveAdapter : previewAdapter;
+export const INTEGRATION_PENDING = !liveConfigured;
