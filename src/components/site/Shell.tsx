@@ -35,9 +35,9 @@ export function Header() {
   const [mobile, setMobile] = useState(false);
   return (
     <header className="sticky top-0 z-50 bg-[#fcfbf8]/95 backdrop-blur-lg border-b border-[#e0e7dc]">
-      <div className="container-page flex items-center justify-between gap-2 sm:gap-3 min-h-[76px] py-2">
+      <div className="container-page flex items-center justify-between gap-2 sm:gap-3 min-h-[88px] py-2">
         <Link to="/" aria-label="GOODSPOTLESS — Home" className="flex shrink-0 items-center text-[#234737] leading-none">
-          <img src="/goodspotless-logo-small.webp" alt="GOODSPOTLESS Cleaning Services" className="h-[60px] w-[112px] sm:h-[70px] sm:w-[138px] object-contain" onError={(e) => { e.currentTarget.style.display = "none"; const fallback = e.currentTarget.nextElementSibling as HTMLElement | null; if (fallback) fallback.style.display = "block"; }} />
+          <img src="/goodspotless-topo.webp" alt="GOODSPOTLESS Cleaning Services" className="h-[66px] w-[176px] sm:h-[84px] sm:w-[230px] object-contain" onError={(e) => { e.currentTarget.style.display = "none"; const fallback = e.currentTarget.nextElementSibling as HTMLElement | null; if (fallback) fallback.style.display = "block"; }} />
           <span style={{ display: "none" }} className="font-display text-base font-bold tracking-tight text-[#122d4e]">GOODSPOTLESS</span>
         </Link>
         <nav aria-label={lang === "en" ? "Primary navigation" : "Navegação principal"} className="hidden xl:flex items-center gap-6">
@@ -66,7 +66,7 @@ export function Footer() {
     <footer className="bg-[#162e25] text-[#f4f3eb]">
       <div className="container-page grid gap-12 py-16 md:grid-cols-[1.3fr_1fr_1fr]">
         <div>
-          <img src="/goodspotless-logo-small.webp" alt="GOODSPOTLESS Cleaning Services" className="w-[210px] max-w-full h-auto object-contain" onError={(e) => { e.currentTarget.style.display = "none"; const fallback = e.currentTarget.nextElementSibling as HTMLElement | null; if (fallback) fallback.style.display = "block"; }} />
+          <img src="/goodspotless-rodape.webp" alt="GOODSPOTLESS Cleaning Services" className="w-[290px] sm:w-[350px] max-w-full h-auto object-contain" onError={(e) => { e.currentTarget.style.display = "none"; const fallback = e.currentTarget.nextElementSibling as HTMLElement | null; if (fallback) fallback.style.display = "block"; }} />
           <span style={{ display: "none" }} className="font-display text-2xl font-bold text-white">GOODSPOTLESS</span>
           <p className="mt-4 max-w-xs text-sm text-white/60 leading-relaxed">{t("footer.tagline")}</p>
           <a href="/#quote" className="inline-flex items-center gap-2 border-b border-[#8aab97] mt-7 pb-2 text-sm font-semibold">{t("cta.quote")} <ArrowRight size={17}/></a>
