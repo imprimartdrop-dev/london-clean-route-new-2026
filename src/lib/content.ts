@@ -23,7 +23,7 @@ export const SERVICES: Service[] = [
     intro: L("A consistent cleaner, the same checklist every visit, and a home that stays on top of itself.", "A mesma profissional, o mesmo checklist a cada visita e uma casa sempre em ordem."),
     idealFor: L("Busy households, couples and families across London.", "Famílias e casais ocupados em toda Londres."),
     included: [L("Dusting and wiping of surfaces", "Tirar pó e limpar superfícies"), L("Kitchen worktops, hob and sink", "Bancadas, fogão e pia"), L("Bathrooms cleaned and descaled", "Banheiros limpos e sem calcário"), L("Hoovering and mopping floors", "Aspirar e passar pano no chão"), L("Bins emptied, beds made", "Lixo retirado e camas arrumadas")],
-    seoTitle: "Regular Domestic Cleaning Across London | London Clean Route",
+    seoTitle: "Regular Domestic Cleaning Across London | GOODSPOTLESS",
     seoDescription: "Weekly and fortnightly home cleaning across London with a consistent cleaner and written checklist. Request a free, no-obligation quote.",
   },
   {
@@ -33,7 +33,7 @@ export const SERVICES: Service[] = [
     intro: L("For spring cleans, before guests arrive or when a home simply needs a fresh start.", "Para faxinas de temporada, antes de visitas ou quando a casa precisa recomeçar."),
     idealFor: L("Homes that have not had a professional clean in a while.", "Casas que não recebem limpeza profissional há algum tempo."),
     included: [L("Skirting boards, doors and switches", "Rodapés, portas e interruptores"), L("Inside microwave and cupboards on request", "Interior do micro-ondas e armários, sob pedido"), L("Limescale and grout attention", "Atenção a calcário e rejunte"), L("High and low dusting", "Pó em áreas altas e baixas"), L("Oven clean as an add-on", "Limpeza de forno como adicional")],
-    seoTitle: "One-Off Deep Cleaning in London | London Clean Route",
+    seoTitle: "One-Off Deep Cleaning in London | GOODSPOTLESS",
     seoDescription: "Thorough one-off deep cleans for London flats and houses, with optional oven cleaning. Tell us about your home for a tailored free quote.",
   },
   {
@@ -43,7 +43,7 @@ export const SERVICES: Service[] = [
     intro: L("A detailed clean planned around inventories and check-outs, for tenants, landlords and letting agents.", "Uma limpeza detalhada planejada em torno de vistorias, para inquilinos, proprietários e imobiliárias."),
     idealFor: L("Tenants moving out, landlords between lets and letting agents.", "Inquilinos de saída, proprietários entre contratos e imobiliárias."),
     included: [L("Kitchen appliances inside and out", "Eletrodomésticos por dentro e por fora"), L("Cupboards and drawers emptied and wiped", "Armários e gavetas limpos"), L("Bathrooms descaled", "Banheiros sem calcário"), L("Interior windows and sills", "Janelas internas e peitoris"), L("Floors hoovered and mopped throughout", "Pisos aspirados e lavados")],
-    seoTitle: "End of Tenancy Cleaning Across London | London Clean Route",
+    seoTitle: "End of Tenancy Cleaning Across London | GOODSPOTLESS",
     seoDescription: "Move-out and move-in cleaning for tenants, landlords and letting agents across London, planned around inventory checks. Get a free quote.",
   },
   {
@@ -53,7 +53,7 @@ export const SERVICES: Service[] = [
     intro: L("Reliable turnarounds between guests, timed around check-out and check-in.", "Trocas confiáveis entre hóspedes, no horário entre check-out e check-in."),
     idealFor: L("Hosts and property managers running short lets.", "Anfitriões e gestores de imóveis de temporada."),
     included: [L("Linen change and bed presentation", "Troca de roupa de cama e arrumação"), L("Bathroom and kitchen reset", "Banheiro e cozinha prontos"), L("Consumables restock from your supplies", "Reposição com seus suprimentos"), L("Damage or issue notes for the host", "Registro de danos ou problemas"), L("Photo-ready finishing touches", "Toques finais prontos para foto")],
-    seoTitle: "Airbnb & Short Let Cleaning in London | London Clean Route",
+    seoTitle: "Airbnb & Short Let Cleaning in London | GOODSPOTLESS",
     seoDescription: "Short-let and Airbnb changeover cleaning in London with linen changes and restocks, scheduled around guest check-ins. Request a free quote.",
   },
   {
@@ -63,7 +63,7 @@ export const SERVICES: Service[] = [
     intro: L("Discreet cleaning before or after hours, so your team arrives to a tidy workplace.", "Limpeza discreta antes ou depois do expediente, para sua equipe chegar a um ambiente organizado."),
     idealFor: L("Small offices, studios and clinics.", "Pequenos escritórios, estúdios e consultórios."),
     included: [L("Desks and touchpoints wiped", "Mesas e pontos de contato higienizados"), L("Kitchenette and washrooms", "Copa e banheiros"), L("Bins and recycling", "Lixo e reciclagem"), L("Floors hoovered and mopped", "Pisos aspirados e lavados"), L("Flexible early or evening slots", "Horários cedo ou à noite")],
-    seoTitle: "Office Cleaning Across London | London Clean Route",
+    seoTitle: "Office Cleaning Across London | GOODSPOTLESS",
     seoDescription: "Before- or after-hours cleaning for small offices and studios across London. Tell us about your workplace for a free quote.",
   },
   {
@@ -73,7 +73,7 @@ export const SERVICES: Service[] = [
     intro: L("Fine dust, paint flecks and residue removed so you can actually enjoy the renovation.", "Poeira fina, respingos de tinta e resíduos removidos para você aproveitar a reforma."),
     idealFor: L("Homeowners and contractors after refurbishment work.", "Proprietários e empreiteiros após reformas."),
     included: [L("Multi-pass dust removal", "Remoção de poeira em várias etapas"), L("Paint and sticker residue on glass", "Resíduos de tinta e adesivos em vidros"), L("Inside cupboards and fittings", "Interior de armários e acessórios"), L("Floors cleaned to finish", "Pisos limpos para entrega"), L("Final walk-through on request", "Vistoria final sob pedido")],
-    seoTitle: "After Builders Cleaning in London | London Clean Route",
+    seoTitle: "After Builders Cleaning in London | GOODSPOTLESS",
     seoDescription: "Post-renovation and after builders cleaning in London: fine dust, paint residue and fittings handled carefully. Request a free quote.",
   },
 ];
