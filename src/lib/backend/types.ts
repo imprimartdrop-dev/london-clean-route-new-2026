@@ -41,5 +41,5 @@ export type SubmitResult =
 /** Every implementation must run sensitive work server-side (createServerFn). */
 export interface EnquiryService {
   readonly mode: "preview" | "live";
-  submitEnquiry(input: QuoteInput, meta: { startedAt: number; photos: File[] }): Promise<SubmitResult>;
+  submitEnquiry(input: QuoteInput, meta: { startedAt: number; photos: File[]; captchaToken?: string | null }): Promise<SubmitResult>;
 }
