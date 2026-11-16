@@ -37,7 +37,7 @@ export function Header() {
     <header className="sticky top-0 z-50 bg-[#fcfbf8]/95 backdrop-blur-lg border-b border-[#e0e7dc]">
       <div className="container-page flex items-center justify-between gap-2 sm:gap-3 min-h-[76px] py-2">
         <Link to="/" className="flex flex-col shrink-0 text-[#234737] leading-none">
-          <span className="font-display text-base min-[380px]:text-lg sm:text-2xl tracking-[-.03em]">London Clean Route</span>
+          <span className="font-display text-base min-[380px]:text-lg sm:text-2xl tracking-[-.03em]">GOODSPOTLESS</span>
           <span className="text-[9px] tracking-[.19em] mt-1.5 uppercase text-[#66816d]">{lang === "en" ? "Thoughtful cleaning" : "Limpeza com cuidado"}</span>
         </Link>
         <nav aria-label={lang === "en" ? "Primary navigation" : "Navegação principal"} className="hidden xl:flex items-center gap-6">
@@ -66,7 +66,7 @@ export function Footer() {
     <footer className="bg-[#162e25] text-[#f4f3eb]">
       <div className="container-page grid gap-12 py-16 md:grid-cols-[1.3fr_1fr_1fr]">
         <div>
-          <p className="font-display text-3xl">London Clean Route</p>
+          <p className="font-display text-3xl">GOODSPOTLESS</p>
           <p className="mt-4 max-w-xs text-sm text-white/60 leading-relaxed">{t("footer.tagline")}</p>
           <a href="/#quote" className="inline-flex items-center gap-2 border-b border-[#8aab97] mt-7 pb-2 text-sm font-semibold">{t("cta.quote")} <ArrowRight size={17}/></a>
         </div>
@@ -82,7 +82,7 @@ export function Footer() {
         </div>
       </div>
       <div className="container-page py-6 border-t border-white/15 flex flex-wrap items-center justify-between gap-4 text-xs text-white/55">
-        <span>© {new Date().getFullYear()} London Clean Route · London, UK</span>
+        <span>© {new Date().getFullYear()} GOODSPOTLESS · London, UK</span>
         <span>{t("footer.rights")}</span>
       </div>
     </footer>
