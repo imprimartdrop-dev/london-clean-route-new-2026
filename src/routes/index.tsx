@@ -8,7 +8,8 @@ import bedroomPhoto from "../assets/bedroom-shortlet.jpg";
 import { useI18n, pick, type DictKey } from "../lib/i18n";
 import { FAQS, INITIAL_AREAS, SERVICES } from "../lib/content";
 import { quoteSchema, STEP_SCHEMAS, normalisePostcode, validatePhotos } from "../lib/quote";
-import { enquiryService } from "../lib/backend/enquiry-service";
+import { enquiryService, TURNSTILE_SITE_KEY } from "../lib/backend/enquiry-service";
+import { TurnstileWidget } from "../components/site/TurnstileWidget";
 import type { QuoteInput } from "../lib/quote";
 
 export const Route = createFileRoute("/")({
@@ -152,6 +153,9 @@ function QuoteWizard() {
   const [busy, setBusy] = useState(false);
   const [review, setReview] = useState(false);
   const [reference, setReference] = useState("");
+  const [resultKind, setResultKind] = useState<"preview" | "live">("preview");
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaResetSignal, setCaptchaResetSignal] = useState(0);
   const [startedAt, setStartedAt] = useState(() => Date.now());
   const change = <K extends keyof Draft>(field: K, value: Draft[K]) => {
     setDraft(prev => ({ ...prev, [field]: value }));
@@ -177,22 +181,33 @@ function QuoteWizard() {
     if (!validation.success) { setError(t("q.error")); return; }
     const photoError = validatePhotos(photos);
     if (photoError) { setError(t(photoError)); return; }
+    if (enquiryService.mode === "live" && !captchaToken) {
+      setError(lang === "en" ? "Please complete the security verification." : "Conclua a verificação de segurança.");
+      return;
+    }
     setBusy(true); setError("");
     try {
-      const result = await enquiryService.submitEnquiry(validation.data, { startedAt, photos });
-      if (result.mode === "preview") setReference(result.reference);
-      else setError(t("q.error"));
-    } catch { setError(t("q.error")); }
-    finally { setBusy(false); }
+      const result = await enquiryService.submitEnquiry(validation.data, { startedAt, photos, captchaToken });
+      if (result.mode === "preview" || result.mode === "live") {
+        setResultKind(result.mode);
+        setReference(result.reference);
+      } else {
+        setError(t("q.error"));
+        if (enquiryService.mode === "live") setCaptchaResetSignal(n => n + 1);
+      }
+    } catch {
+      setError(t("q.error"));
+      if (enquiryService.mode === "live") setCaptchaResetSignal(n => n + 1);
+    } finally { setBusy(false); }
   };
   const inputClass = "lcr-field";
   const serviceChosen = SERVICES.find(s => s.slug === draft.service);
   if (reference) return (
     <div className="lcr-quote-success" role="status">
       <div className="lcr-success-mark"><Check size={30}/></div>
-      <p className="eyebrow">{lang === "en" ? "DEMONSTRATION COMPLETE" : "DEMONSTRAÇÃO CONCLUÍDA"}</p>
-      <h3 className="mt-4 text-3xl md:text-4xl">{t("q.previewDoneTitle")}</h3>
-      <p className="mt-4 text-muted-foreground max-w-xl mx-auto">{t("q.previewDoneText")}</p>
+      <p className="eyebrow">{resultKind === "live" ? (lang === "en" ? "REQUEST RECEIVED" : "PEDIDO RECEBIDO") : (lang === "en" ? "DEMONSTRATION COMPLETE" : "DEMONSTRAÇÃO CONCLUÍDA")}</p>
+      <h3 className="mt-4 text-3xl md:text-4xl">{resultKind === "live" ? (lang === "en" ? "Your request has been saved." : "Seu pedido foi registrado.") : t("q.previewDoneTitle")}</h3>
+      <p className="mt-4 text-muted-foreground max-w-xl mx-auto">{resultKind === "live" ? (lang === "en" ? "We will review your request and contact you. No appointment is confirmed yet." : "Vamos analisar seu pedido e entrar em contato. Nenhum agendamento foi confirmado ainda.") : t("q.previewDoneText")}</p>
       <p className="mt-5 text-xl font-semibold">{reference}</p>
       <button type="button" className="lcr-button mt-7" onClick={() => {setReference("");setDraft(INITIAL);setExtras([]);setPhotos([]);setStep(1);setReview(false);setStartedAt(Date.now());}}>
         {t("q.again")} <ArrowRight size={18}/>
@@ -212,10 +227,10 @@ function QuoteWizard() {
         </div>
       </div>
       <div className="lcr-quote-card">
-        <div className="lcr-preview-warning" role="status">
+        {enquiryService.mode === "preview" && <div className="lcr-preview-warning" role="status">
           <ShieldCheck size={16} aria-hidden="true"/>
           <span>{lang === "en" ? "Preview mode: forms are not connected or delivered yet." : "Modo prévia: os formulários ainda não enviam nem armazenam pedidos."}</span>
-        </div>
+        </div>}
         <div className="flex items-center justify-between gap-3 mb-3">
           <p className="eyebrow !text-[11px]">{t("q.step")} {step} {t("q.of")} 4</p>
           <span className="text-xs text-muted-foreground">{Math.round(step / 4 * 100)}%</span>
@@ -268,14 +283,14 @@ function QuoteWizard() {
             <label className="block"><span className="lcr-label">{t("q.notes")}</span>
               <textarea className={inputClass+" min-h-28"} rows={4} maxLength={1000} placeholder={t("q.notesPh")} value={draft.notes ?? ""} onChange={e=>change("notes",e.target.value)}/>
             </label>
-            <label className="block"><span className="lcr-label">{t("q.photos")}</span>
+            {enquiryService.mode === "preview" ? <label className="block"><span className="lcr-label">{t("q.photos")}</span>
               <input className={inputClass} type="file" multiple accept="image/jpeg,image/png,image/webp,image/heic,image/heif" onChange={e=>{
                 const files = Array.from(e.currentTarget.files||[]);
                 const issue = validatePhotos(files);
                 if (issue) {setError(t(issue));setPhotos([]);} else {setError("");setPhotos(files);}
               }}/>
               <span className="block mt-2 text-xs text-muted-foreground">{t("q.photosHint")}</span>
-            </label>
+            </label> : <p className="text-xs text-muted-foreground">{lang === "en" ? "You may send photos when we reply. Photo upload is not available in this form yet." : "Você poderá enviar fotos quando respondermos. O envio de fotos por este formulário ainda não está disponível."}</p>}
           </div>}
           {step === 4 && <div className="space-y-4">
             <label className="block"><span className="lcr-label">{t("q.name")}</span><input className={inputClass} autoComplete="name" value={draft.name} onChange={e=>change("name",e.target.value)}/></label>
@@ -295,6 +310,10 @@ function QuoteWizard() {
             <div><span>{t("q.name")}</span><strong>{draft.name}</strong></div>
           </div>
           <p className="mt-5 text-sm text-muted-foreground">{t("q.pendingText")}</p>
+          {enquiryService.mode === "live" && <div className="mt-5">
+            <TurnstileWidget siteKey={TURNSTILE_SITE_KEY} onToken={setCaptchaToken} resetSignal={captchaResetSignal}/>
+            <p className="mt-2 text-xs text-muted-foreground">{lang === "en" ? "Security verification is required before submitting." : "É necessário concluir a verificação de segurança antes de enviar."}</p>
+          </div>}
         </>}
         {error && <p className="mt-5 rounded-md bg-red-50 text-red-800 px-4 py-3 text-sm" role="alert">{error}</p>}
         <div className="mt-7 flex gap-3 items-center justify-between">
