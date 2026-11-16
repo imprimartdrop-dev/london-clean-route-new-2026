@@ -36,9 +36,8 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 bg-[#fcfbf8]/95 backdrop-blur-lg border-b border-[#e0e7dc]">
       <div className="container-page flex items-center justify-between gap-2 sm:gap-3 min-h-[76px] py-2">
-        <Link to="/" className="flex flex-col shrink-0 text-[#234737] leading-none">
-          <span className="font-display text-base min-[380px]:text-lg sm:text-2xl tracking-[-.03em]">GOODSPOTLESS</span>
-          <span className="text-[9px] tracking-[.19em] mt-1.5 uppercase text-[#66816d]">{lang === "en" ? "Thoughtful cleaning" : "Limpeza com cuidado"}</span>
+        <Link to="/" aria-label="GOODSPOTLESS — Home" className="flex shrink-0 items-center text-[#234737] leading-none">
+          <img src="/goodspotless-logo.png" alt="GOODSPOTLESS Cleaning Services" className="h-[60px] w-[112px] sm:h-[70px] sm:w-[138px] object-contain" onError={(e) => { e.currentTarget.style.display = "none"; e.currentTarget.insertAdjacentText("afterend", "GOODSPOTLESS"); }} />
         </Link>
         <nav aria-label={lang === "en" ? "Primary navigation" : "Navegação principal"} className="hidden xl:flex items-center gap-6">
           {NAV.map(n => <a key={n.href} href={n.href} className="text-sm font-medium text-[#536958] hover:text-[#244936] transition-colors">{t(n.k)}</a>)}
@@ -66,7 +65,7 @@ export function Footer() {
     <footer className="bg-[#162e25] text-[#f4f3eb]">
       <div className="container-page grid gap-12 py-16 md:grid-cols-[1.3fr_1fr_1fr]">
         <div>
-          <p className="font-display text-3xl">GOODSPOTLESS</p>
+          <img src="/goodspotless-logo.png" alt="GOODSPOTLESS Cleaning Services" className="w-[210px] max-w-full h-auto object-contain" onError={(e) => { e.currentTarget.style.display = "none"; e.currentTarget.insertAdjacentText("afterend", "GOODSPOTLESS"); }} />
           <p className="mt-4 max-w-xs text-sm text-white/60 leading-relaxed">{t("footer.tagline")}</p>
           <a href="/#quote" className="inline-flex items-center gap-2 border-b border-[#8aab97] mt-7 pb-2 text-sm font-semibold">{t("cta.quote")} <ArrowRight size={17}/></a>
         </div>
