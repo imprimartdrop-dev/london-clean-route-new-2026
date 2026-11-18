@@ -192,6 +192,12 @@ function QuoteWizard() {
     try {
       const result = await enquiryService.submitEnquiry(validation.data, { startedAt, photos, captchaToken });
       if (result.mode === "preview" || result.mode === "live") {
+        // Only real, successful enquiries count as Google Ads leads; never send PII.
+        if (result.mode === "live" && typeof window !== "undefined") {
+          const analyticsWindow = window as Window & { dataLayer?: Array<Record<string, unknown>> };
+          analyticsWindow.dataLayer = analyticsWindow.dataLayer || [];
+          analyticsWindow.dataLayer.push({ event: "goodspotless_quote_submitted", lead_source: "website", service_type: validation.data.service });
+        }
         setResultKind(result.mode);
         setReference(result.reference);
       } else {
@@ -385,7 +391,7 @@ function HomePage() {
           <p>{lang==="en"?"From regular visits to the deepest reset, choose a service that suits your home and your life.":"De visitas regulares à limpeza mais completa, escolha o serviço ideal para o seu espaço."}</p>
         </div>
         <div className="lcr-service-grid">
-          {SERVICES.map((s,i)=><a href="#quote" className="lcr-service-card" key={s.slug}>
+          {SERVICES.map((s,i)=><a id={s.slug} href="#quote" className="lcr-service-card" key={s.slug}>
             <span className="lcr-service-number">0{i+1}</span>
             <div className="lcr-service-card__icon">{i===0?<HomeIcon size={28}/>:i===3?<Clock3 size={28}/>:<Sparkles size={28}/>}</div>
             <h3>{pick(s.name,lang)}</h3>
