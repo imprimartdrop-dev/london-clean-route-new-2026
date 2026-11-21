@@ -50,6 +50,7 @@ export function TurnstileWidget({
       if (cancelled || !container.current || !window.turnstile) return;
       widgetId.current = window.turnstile.render(container.current, {
         sitekey: siteKey,
+        action: "cleaning_enquiry",
         theme: "auto",
         callback: (token: string) => onToken(token),
         "expired-callback": () => onToken(null),
