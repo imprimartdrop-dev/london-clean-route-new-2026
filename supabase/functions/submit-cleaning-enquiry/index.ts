@@ -167,6 +167,17 @@ Deno.serve(async(req:Request)=>{
       // The enquiry is still safely stored; do not imply customer must resubmit.
       console.error("LCR Telegram notify failed; lead saved for admin recovery");
     }
+    // Best-effort private push. Failure never loses a stored lead or blocks the customer.
+    try {
+      const response=await fetch(supabase()+"/functions/v1/goodspotless-push",{
+        method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+key()},
+        signal:AbortSignal.timeout(2200),
+        body:JSON.stringify({action:"enquiry",enquiry_id:lead.id})
+      });
+      if(!response.ok)console.error("LCR admin push returned",response.status);
+    }catch{
+      console.error("LCR admin push unavailable; lead retained");
+    }
     return reply(201,{reference:lead.reference,stored:true,message:"Enquiry received for review"},cors);
   }catch(error){
     console.error("LCR enquiry intake error",error instanceof Error?error.message:"unknown");
