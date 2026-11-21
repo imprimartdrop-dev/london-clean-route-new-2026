@@ -107,9 +107,14 @@ Deno.serve(async (req: Request) => {
   if (req.method !== "POST") return reply(405, { error: "Method not allowed" });
   try {
     const auth = req.headers.get("Authorization") || "";
+    if (!auth.startsWith("Bearer ")) return reply(401, { error: "Authorization required" });
+    if (Number(req.headers.get("Content-Length") || 0) > 1500)
+      return reply(413, { error: "Payload too large" });
     const internalKey = env("SUPABASE_SERVICE_ROLE_KEY");
     const isInternal = auth === `Bearer ${internalKey}`;
-    const body = (await req.json()) as { action?: string; enquiry_id?: string };
+    const raw = await req.text();
+    if (raw.length > 1500) return reply(413, { error: "Payload too large" });
+    const body = JSON.parse(raw) as { action?: string; enquiry_id?: string };
 
     if (
       isInternal &&
