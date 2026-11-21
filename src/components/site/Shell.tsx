@@ -1,5 +1,5 @@
-import { Link } from "@tanstack/react-router";
-import { useEffect, useState, type ReactNode } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { useI18n, type DictKey } from "@/lib/i18n";
 
@@ -62,6 +62,21 @@ export function Header() {
 
 export function Footer() {
   const { lang, t } = useI18n();
+  const navigate = useNavigate();
+  const footerTaps = useRef({ count: 0, startedAt: 0 });
+
+  const handleCopyrightTap = () => {
+    const now = Date.now();
+    if (now - footerTaps.current.startedAt > 4000) {
+      footerTaps.current = { count: 0, startedAt: now };
+    }
+    footerTaps.current.count += 1;
+    if (footerTaps.current.count >= 5) {
+      footerTaps.current = { count: 0, startedAt: 0 };
+      void navigate({ to: "/admin" });
+    }
+  };
+
   return (
     <footer className="bg-[#162e25] text-[#f4f3eb]">
       <div className="container-page grid gap-12 py-16 md:grid-cols-[1.3fr_1fr_1fr]">
@@ -83,7 +98,13 @@ export function Footer() {
         </div>
       </div>
       <div className="container-page py-6 border-t border-white/15 flex flex-wrap items-center justify-between gap-4 text-xs text-white/55">
-        <span>© {new Date().getFullYear()} GOODSPOTLESS · London, UK</span>
+        <button
+          type="button"
+          onClick={handleCopyrightTap}
+          className="touch-manipulation select-none cursor-default text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/80"
+        >
+          © {new Date().getFullYear()} GOODSPOTLESS · London, UK
+        </button>
         <span>{t("footer.rights")}</span>
       </div>
     </footer>
