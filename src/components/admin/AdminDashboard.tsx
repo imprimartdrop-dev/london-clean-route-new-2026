@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react
 import {
   ArrowDownLeft,
   ArrowUpRight,
+  BellRing,
   CalendarDays,
   CheckCircle2,
   ChevronRight,
@@ -35,6 +36,12 @@ import {
   type AdminTable,
   type RecordRow,
 } from "../../lib/admin/admin-api";
+import {
+  activateAdminPush,
+  isInstalledApp,
+  pushSupported,
+  testAdminPush,
+} from "../../lib/admin/admin-push";
 
 type Pane =
   "overview" | "enquiries" | "clients" | "properties" | "staff" | "visits" | "finance" | "partners";
@@ -554,6 +561,33 @@ export function AdminDashboard() {
   const [dataError, setDataError] = useState("");
   const [busyData, setBusyData] = useState(false);
   const [lastLoaded, setLastLoaded] = useState<Date | null>(null);
+  const [pushBusy, setPushBusy] = useState<"activate" | "test" | null>(null);
+  const [pushFeedback, setPushFeedback] = useState("");
+
+  const activateNotifications = () => {
+    if (!session) return;
+    setPushBusy("activate");
+    setPushFeedback("");
+    // Keep permission request in the click's user-activation context for iOS.
+    void activateAdminPush(session)
+      .then(setPushFeedback)
+      .catch((error: unknown) =>
+        setPushFeedback(error instanceof Error ? error.message : "Falha ao ativar."),
+      )
+      .finally(() => setPushBusy(null));
+  };
+
+  const sendTestPush = () => {
+    if (!session) return;
+    setPushBusy("test");
+    setPushFeedback("");
+    void testAdminPush(session)
+      .then(setPushFeedback)
+      .catch((error: unknown) =>
+        setPushFeedback(error instanceof Error ? error.message : "Falha no teste."),
+      )
+      .finally(() => setPushBusy(null));
+  };
 
   const reload = useCallback(async (activeSession: AdminSession) => {
     setBusyData(true);
@@ -879,6 +913,54 @@ export function AdminDashboard() {
 
           {pane === "overview" && (
             <>
+              <section className="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 sm:p-6">
+                <div className="flex items-start gap-3">
+                  <BellRing className="mt-1 shrink-0 text-emerald-900" size={24} />
+                  <div>
+                    <h2 className="text-lg font-bold text-emerald-950">
+                      Avisar quando chegar cliente
+                    </h2>
+                    <p className="mt-2 text-sm text-emerald-950">
+                      Ative o push para receber novos pedidos na tela bloqueada do iPhone. Os avisos
+                      não mostram informações pessoais do cliente até você abrir o painel.
+                    </p>
+                    <p className="mt-2 text-sm text-emerald-900">
+                      {!pushSupported()
+                        ? "Seu navegador ainda não oferece Web Push. No iPhone, use Safari e adicione o painel à Tela de Início."
+                        : !isInstalledApp()
+                          ? "iPhone: no Safari, toque Compartilhar → Adicionar à Tela de Início; depois abra pelo novo ícone GOODSPOTLESS."
+                          : "App instalado: você pode permitir os alertas abaixo. Ative também Sons em Ajustes → Notificações → GOODSPOTLESS."}
+                    </p>
+                    <div className="mt-4 flex flex-wrap gap-3">
+                      <button
+                        type="button"
+                        onClick={activateNotifications}
+                        disabled={pushBusy !== null || !pushSupported()}
+                        className="rounded-xl bg-emerald-900 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
+                      >
+                        {pushBusy === "activate" ? "Ativando…" : "Ativar notificações push"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={sendTestPush}
+                        disabled={pushBusy !== null || !pushSupported()}
+                        className="rounded-xl border border-emerald-900 px-4 py-2.5 text-sm font-semibold text-emerald-950 disabled:opacity-50"
+                      >
+                        {pushBusy === "test" ? "Enviando…" : "Testar aviso real"}
+                      </button>
+                    </div>
+                    {pushFeedback && (
+                      <p role="status" className="mt-3 text-sm font-semibold text-emerald-950">
+                        {pushFeedback}
+                      </p>
+                    )}
+                    <p className="mt-3 text-xs text-emerald-800">
+                      O toque e a vibração com a tela bloqueada dependem das configurações do iOS,
+                      modo silencioso e Foco. O site não pode forçar o volume nem duas vibrações.
+                    </p>
+                  </div>
+                </div>
+              </section>
               <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                 {[
                   {

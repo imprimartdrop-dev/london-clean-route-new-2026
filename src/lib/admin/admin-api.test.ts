@@ -24,7 +24,7 @@ describe("GOODSPOTLESS admin API", () => {
 
     expect(await isAdminUser(session)).toBe(false);
     expect(mockFetch).toHaveBeenCalledTimes(1);
-    const [url, options] = mockFetch.mock.calls[0];
+    const [url, options] = mockFetch.mock.calls[0]!;
     expect(url).toContain("/rest/v1/user_roles?");
     expect(options.headers.Authorization).toBe("Bearer test-user-token");
     expect(options.headers).not.toHaveProperty("service_role");
@@ -46,7 +46,7 @@ describe("GOODSPOTLESS admin API", () => {
     expect(window.localStorage.getItem("goodspotless_admin_session_v1")).not.toContain(
       "unique-test-password",
     );
-    expect(mockFetch.mock.calls[0][0]).toContain("grant_type=password");
+    expect(mockFetch.mock.calls[0]![0]).toContain("grant_type=password");
   });
 
   it("rotates an expired refresh token only once for parallel requests", async () => {

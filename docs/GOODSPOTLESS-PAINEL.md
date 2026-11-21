@@ -51,5 +51,32 @@ Escopo exclusivo: `imprimartdrop-dev/london-clean-route-new-2026` e Supabase
 - Valores de serviços são previsões; **não geram receita automaticamente**. É
   preciso confirmar o efetivo recebimento em Financeiro para evitar duplicidade.
 - O financeiro é gerencial, não substitui contabilidade ou folhas de pagamento.
-- Áudio, notificações push fora do navegador e integração Google Sheets ainda
-  não estão nesta etapa; podem ser adicionados sobre essa base com testes separados.
+- Entrada por áudio e integração Google Sheets ainda não estão nesta etapa.
+
+## Ícone na tela inicial e notificações com a tela bloqueada
+
+- O ícone usa a marca oficial `goodspotless-logo-small.webp`, convertida para PNG
+  de 180, 192 e 512 px. A rota `/admin` fornece o manifesto
+  `goodspotless-admin.webmanifest`, com início direto no painel; o site também
+  fornece `apple-touch-icon` e favicon GOODSPOTLESS.
+- No iPhone (iOS 16.4 ou superior), abra **/admin no Safari**, toque em
+  **Compartilhar → Adicionar à Tela de Início** e abra o painel por esse ícone.
+  Se existia um atalho anterior com o símbolo genérico, remova-o e adicione
+  novamente depois da publicação do GitHub.
+- Faça login com uma conta cujo `user_roles.role` seja `admin` e abra
+  **Visão geral → Ativar notificações push**. Toque em **Permitir** na solicitação
+  do iPhone e depois em **Testar aviso real**. Esse teste é enviado pelo servidor,
+  e não apenas uma reprodução local.
+- Em **Ajustes → Notificações → GOODSPOTLESS**, permita notificações, sons e
+  exibição na tela bloqueada. Modo silencioso, Foco e intensidade da vibração
+  são controlados pelo iOS; o site não pode forçar volume alto ou dois pulsos.
+- Novas solicitações do formulário ativam push apenas para inscrições de
+  administradores salvas em `admin_push_subscriptions`. Nenhum dado privado do
+  cliente é exposto na notificação; toque nela para abrir `/admin` autenticado.
+- O código de envio é `supabase/functions/goodspotless-push/index.ts`. A chave
+  pública VAPID está no GitHub e a **chave privada fica criptografada no
+  Supabase Vault**, acessível somente ao papel de backend `service_role`.
+  O banco e a função já foram instalados no Supabase GOODSPOTLESS; o ícone e
+  os botões só aparecem no site após publicar o código via GitHub.
+- O aviso de novo cliente é **best effort**: falhas no serviço de push não
+  desfazem o pedido salvo nem impedem o cliente de concluir o formulário.
