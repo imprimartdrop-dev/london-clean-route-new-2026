@@ -92,11 +92,12 @@ async function verifyCaptcha(token:string, ip:string):Promise<boolean> {
   if(ip)form.set("remoteip",ip);
   const response=await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify",{method:"POST",body:form});
   if(!response.ok)return false;
-  const json=await response.json() as {success?:boolean;hostname?:string};
-  // Siteverify must genuinely accept the response. If strict hostname validation
-  // is needed, add TURNSTILE_EXPECTED_HOSTNAME to configuration.
-  const expectedHost=Deno.env.get("TURNSTILE_EXPECTED_HOSTNAME");
-  return json.success===true && (!expectedHost||json.hostname===expectedHost);
+  const json=await response.json() as {success?:boolean;hostname?:string;action?:string};
+  // Fail closed unless Cloudflare verified this exact public form and hostname.
+  const expectedHost=required("TURNSTILE_EXPECTED_HOSTNAME");
+  return json.success===true &&
+    json.hostname===expectedHost &&
+    json.action==="cleaning_enquiry";
 }
 async function sendBot(enquiry:Enquiry):Promise<number>{
   const bot=required("TELEGRAM_BOT_TOKEN");
