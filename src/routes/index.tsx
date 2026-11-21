@@ -213,7 +213,7 @@ function QuoteWizard() {
       <p className="mt-4 text-muted-foreground max-w-xl mx-auto">{resultKind === "live" ? (lang === "en" ? "We will review your request and contact you. No appointment is confirmed yet." : "Vamos analisar seu pedido e entrar em contato. Nenhum agendamento foi confirmado ainda.") : t("q.previewDoneText")}</p>
       <p className="mt-5 text-xl font-semibold">{reference}</p>
       <button type="button" className="lcr-button mt-7" onClick={() => {setReference("");setDraft(INITIAL);setExtras([]);setLivingRooms(1);setKitchens(1);setPhotos([]);setStep(1);setReview(false);setStartedAt(Date.now());}}>
-        {t("q.again")} <ArrowRight size={18}/>
+        {resultKind === "live" ? (lang === "en" ? "Send another enquiry" : "Fazer outro pedido") : t("q.again")} <ArrowRight size={18}/>
       </button>
     </div>
   );
@@ -316,7 +316,11 @@ function QuoteWizard() {
             <div><span>{t("q.date")}</span><strong>{draft.date}</strong></div>
             <div><span>{t("q.name")}</span><strong>{draft.name}</strong></div>
           </div>
-          <p className="mt-5 text-sm text-muted-foreground">{t("q.pendingText")}</p>
+          <p className="mt-5 text-sm text-muted-foreground">{enquiryService.mode === "live"
+            ? (lang === "en"
+              ? "Please check your details before sending. We will contact you to discuss a personalised quote; this is not a confirmed booking."
+              : "Confira seus dados antes de enviar. Entraremos em contato para preparar o orçamento; isto ainda não é uma reserva confirmada.")
+            : t("q.pendingText")}</p>
           {enquiryService.mode === "live" && <div className="mt-5">
             <TurnstileWidget siteKey={TURNSTILE_SITE_KEY} onToken={setCaptchaToken} resetSignal={captchaResetSignal}/>
             <p className="mt-2 text-xs text-muted-foreground">{lang === "en" ? "Security verification is required before submitting." : "É necessário concluir a verificação de segurança antes de enviar."}</p>
@@ -326,7 +330,7 @@ function QuoteWizard() {
         <div className="mt-7 flex gap-3 items-center justify-between">
           <button type="button" disabled={step===1&&!review} onClick={()=>{setError("");if(review)setReview(false);else setStep(s=>Math.max(1,s-1));}} className="lcr-button-back"><ChevronLeft size={17}/>{t("q.back")}</button>
           <button type="button" disabled={busy} className="lcr-button" onClick={review?submit:next}>
-            {busy ? t("q.submitting") : review ? t("q.submit") : step===4 ? t("q.review") : t("q.next")}
+            {busy ? t("q.submitting") : review ? (enquiryService.mode === "live" ? (lang === "en" ? "Send enquiry" : "Enviar pedido") : t("q.submit")) : step===4 ? t("q.review") : t("q.next")}
             {!busy && <ArrowRight size={18}/>}
           </button>
         </div>
