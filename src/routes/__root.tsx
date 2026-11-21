@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
   Link,
+  useLocation,
   createRootRouteWithContext,
   useRouter,
   HeadContent,
@@ -94,7 +95,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Figtree:wght@400;500;600&display=swap" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Figtree:wght@400;500;600&display=swap",
+      },
     ],
   }),
   shellComponent: RootShell,
@@ -119,16 +123,29 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const isAdmin = useLocation({ select: (location) => location.pathname.startsWith("/admin") });
 
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <I18nProvider>
-        <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:p-3">Skip to content</a>
-        <Header />
-        <main id="main"><Outlet /></main>
-        <Footer />
-        <CookieConsent />
+        {isAdmin ? (
+          <main id="main">
+            <Outlet />
+          </main>
+        ) : (
+          <>
+            <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:p-3">
+              Skip to content
+            </a>
+            <Header />
+            <main id="main">
+              <Outlet />
+            </main>
+            <Footer />
+            <CookieConsent />
+          </>
+        )}
       </I18nProvider>
     </QueryClientProvider>
   );
