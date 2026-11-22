@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://goodspotless.com/sitemap.xml
+Sitemap: https://goodspotless.uk/sitemap.xml
