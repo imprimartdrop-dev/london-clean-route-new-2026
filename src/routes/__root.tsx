@@ -86,6 +86,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "GOODSPOTLESS | Cleaning Services in London" },
       { name: "description", content: "Professional domestic, deep, end of tenancy, office and short-let cleaning throughout London." },
+      { name: "google-site-verification", content: "ePD58ThEuQuvsiG-l1TsQ17bZmZ_YO0Uc2bmF4dIAqE" },
     ],
     links: [
       {
