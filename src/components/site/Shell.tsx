@@ -124,7 +124,7 @@ export function CookieConsent() {
   const { t } = useI18n();
   const [show, setShow] = useState(false);
   useEffect(() => {
-    try { if (!localStorage.getItem("lcr-consent")) setShow(true); } catch { setShow(true); }
+    try { if (!localStorage.getItem("lcr-ads-consent-v1")) setShow(true); } catch { setShow(true); }
     syncGoogleAdsConsent();
     const openPreferences = () => setShow(true);
     window.addEventListener("goodspotless_open_cookie_preferences", openPreferences);
@@ -132,7 +132,10 @@ export function CookieConsent() {
   }, []);
   if (!show) return null;
   const save = (value: "all" | "essential") => {
-    try {localStorage.setItem("lcr-consent", value);} catch { /* storage blocked */ }
+    try {
+      localStorage.setItem("lcr-consent", value);
+      localStorage.setItem("lcr-ads-consent-v1", value);
+    } catch { /* storage blocked */ }
     syncGoogleAdsConsent(value);
     setShow(false);
   };
