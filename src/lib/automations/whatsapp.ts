@@ -1,5 +1,5 @@
 /**
- * London Clean Route — manual WhatsApp message builder.
+ * GOODSPOTLESS — manual WhatsApp message builder.
  * This module NEVER sends a message. An authorised admin must check and press
  * Send in WhatsApp, then separately mark the enquiry as contacted.
  *
@@ -30,8 +30,8 @@ export function createCleaningReply(lead: CleaningReply): string {
   const ref = lead.reference.trim();
   const service = lead.service.trim();
   const postcode = lead.postcode.trim().toUpperCase();
-  const intro = ["Hello " + name + ",", "", "Thank you for getting in touch with London Clean Route.", "", "🧹 *Service:* " + service, "📍 *Postcode:* " + postcode, "🔖 *Reference:* " + ref];
-  const tail = ["", "Kind regards,", "*London Clean Route*"];
+  const intro = ["Hello " + name + ",", "", "Thank you for getting in touch with GOODSPOTLESS.", "", "🧹 *Service:* " + service, "📍 *Postcode:* " + postcode, "🔖 *Reference:* " + ref];
+  const tail = ["", "Kind regards,", "*GOODSPOTLESS*"];
   switch (lead.intent) {
     case "accepted":
       return ["*YOUR CLEANING ENQUIRY ✅*", "", ...intro, "", "We've received and reviewed your request. We'll confirm availability and next steps with you shortly. No appointment is booked yet.", ...tail].join("\n");
