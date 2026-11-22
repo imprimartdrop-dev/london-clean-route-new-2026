@@ -24,9 +24,10 @@ describe("Goodspotless manual WhatsApp drafts", () => {
     expect(createWhatsAppDraftLink({ ...enquiry, phone: "not a phone", intent: "ask" })).toBeNull();
   });
 
-  it("does not promise a booking in a reviewed enquiry", () => {
+  it("keeps the reviewed enquiry message concise", () => {
     const message = createCleaningReply({ ...enquiry, intent: "accepted" });
-    expect(message).toContain("No appointment is booked yet");
+    expect(message).not.toContain("No appointment is booked yet");
+    expect(message).toContain("agree the scope of work, price and availability.");
   });
 
   it("shows customer-provided property, timing and extras in natural British English", () => {
@@ -44,7 +45,8 @@ describe("Goodspotless manual WhatsApp drafts", () => {
     expect(message).toContain("25 November 2026");
     expect(message).toContain("Morning (8am–12pm)");
     expect(message).toContain("Please pay attention to the stairs.");
-    expect(message).toContain("No appointment is booked yet");
+    expect(message).not.toContain("No appointment is booked yet");
+    expect(message).toContain("agree the scope of work, price and availability.");
   });
 
   it("acknowledges a newly received request without saying it has already been reviewed", () => {
