@@ -2,6 +2,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { useI18n, type DictKey } from "@/lib/i18n";
+import { INTEGRATION_PENDING } from "@/lib/backend/enquiry-service";
 
 const NAV: { href: string; k: DictKey }[] = [
   { href: "/#services", k: "nav.services" },
@@ -92,9 +93,13 @@ export function Footer() {
         </div>
         <div className="text-sm space-y-3" id="privacy">
           <p className="uppercase tracking-[.14em] text-[#a9c1ad] text-xs mb-5">{t("footer.legal")}</p>
-          <p className="opacity-75 leading-relaxed">{lang === "en"
-            ? "Preview site. The quote form is not connected; any details entered are not submitted to us. A full privacy notice and verified business contact details will be provided before launch."
-            : "Site em prévia. O formulário não está conectado; os dados preenchidos não são enviados. A política de privacidade completa e os dados comerciais serão publicados antes do lançamento."}</p>
+          <p className="opacity-75 leading-relaxed">{INTEGRATION_PENDING
+            ? (lang === "en"
+              ? "Preview site. The quote form is not connected; any details entered are not submitted to us. A full privacy notice and verified business contact details will be provided before launch."
+              : "Site em prévia. O formulário não está conectado; os dados preenchidos não são enviados. A política de privacidade completa e os dados comerciais serão publicados antes do lançamento.")
+            : (lang === "en"
+              ? "Your quote request and contact details are used to review your cleaning needs and respond personally. Only our authorised team can access requests. No booking is confirmed until we contact you. For questions about your details or deletion, reply to our response."
+              : "Seu pedido de orçamento e dados de contato são usados para avaliar a limpeza solicitada e responder pessoalmente. Apenas a equipe autorizada acessa os pedidos. Nenhuma reserva é confirmada antes do nosso contato. Para dúvidas sobre seus dados ou exclusão, responda ao nosso retorno.")}</p>
         </div>
       </div>
       <div className="container-page py-6 border-t border-white/15 flex flex-wrap items-center justify-between gap-4 text-xs text-white/55">
@@ -105,7 +110,7 @@ export function Footer() {
         >
           © {new Date().getFullYear()} GOODSPOTLESS · London, UK
         </button>
-        <span>{t("footer.rights")}</span>
+        <span>{INTEGRATION_PENDING ? t("footer.rights") : (lang === "en" ? "Quotes reviewed personally · Subject to availability" : "Orçamentos analisados pessoalmente · Sujeitos à disponibilidade")}</span>
       </div>
     </footer>
   );
