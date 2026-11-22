@@ -22,7 +22,7 @@ describe("GOODSPOTLESS Google Ads conversions", () => {
     expect(scripts()).toHaveLength(0);
     expect(conversions()).toHaveLength(0);
 
-    localStorage.setItem("lcr-consent", "all");
+    localStorage.setItem("lcr-ads-consent-v1", "all");
     syncGoogleAdsConsent();
     expect(scripts()).toHaveLength(1);
     expect(conversions()).toHaveLength(1);
@@ -37,7 +37,7 @@ describe("GOODSPOTLESS Google Ads conversions", () => {
 
   it("counts multiple distinct successful requests, but none while advertising is declined", async () => {
     const { trackSuccessfulEnquiry, syncGoogleAdsConsent } = await import("./conversions");
-    localStorage.setItem("lcr-consent", "essential");
+    localStorage.setItem("lcr-ads-consent-v1", "essential");
     expect(trackSuccessfulEnquiry("LCR-0201")).toBe(true);
     expect(scripts()).toHaveLength(0);
 
