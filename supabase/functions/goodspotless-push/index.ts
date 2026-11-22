@@ -19,11 +19,31 @@ function env(name: string): string {
   return value;
 }
 
-function reply(status: number, body: Record<string, unknown>) {
+function reply(status: number, body: Record<string, unknown>, headers: Record<string, string> = {}) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
+    headers: { "Content-Type": "application/json", "Cache-Control": "no-store", ...headers },
   });
+}
+
+// The installed iPhone PWA calls this Edge Function from a different origin.
+// Preflight must succeed without a JWT, while POST still checks Supabase auth.
+const trustedOrigins = new Set([
+  "https://goodspotless.imprimartdrop.workers.dev",
+  "https://goodspotless.com",
+  "https://www.goodspotless.com",
+]);
+
+function corsHeaders(origin: string | null): Record<string, string> {
+  return origin && trustedOrigins.has(origin)
+    ? {
+        "Access-Control-Allow-Origin": origin,
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-client-info",
+        "Access-Control-Max-Age": "600",
+        Vary: "Origin",
+      }
+    : {};
 }
 
 async function backend(path: string, options: RequestInit = {}) {
@@ -104,16 +124,21 @@ async function sendToDevices(userId: string | null, notification: { id: string; 
 }
 
 Deno.serve(async (req: Request) => {
-  if (req.method !== "POST") return reply(405, { error: "Method not allowed" });
+  const origin = req.headers.get("Origin");
+  const cors = corsHeaders(origin);
+  if (origin && !trustedOrigins.has(origin)) return reply(403, { error: "Origin not permitted" });
+  if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
+  if (req.method !== "POST") return reply(405, { error: "Method not allowed" }, cors);
+  const respond = (status: number, data: Record<string, unknown>) => reply(status, data, cors);
   try {
     const auth = req.headers.get("Authorization") || "";
-    if (!auth.startsWith("Bearer ")) return reply(401, { error: "Authorization required" });
+    if (!auth.startsWith("Bearer ")) return respond(401, { error: "Authorization required" });
     if (Number(req.headers.get("Content-Length") || 0) > 1500)
-      return reply(413, { error: "Payload too large" });
+      return respond(413, { error: "Payload too large" });
     const internalKey = env("SUPABASE_SERVICE_ROLE_KEY");
     const isInternal = auth === `Bearer ${internalKey}`;
     const raw = await req.text();
-    if (raw.length > 1500) return reply(413, { error: "Payload too large" });
+    if (raw.length > 1500) return respond(413, { error: "Payload too large" });
     const body = JSON.parse(raw) as { action?: string; enquiry_id?: string };
 
     if (
@@ -125,8 +150,8 @@ Deno.serve(async (req: Request) => {
       const enquiry = (await backend(
         `rest/v1/enquiries?select=id&id=eq.${encodeURIComponent(body.enquiry_id)}&limit=1`,
       )) as { id: string }[];
-      if (enquiry.length !== 1) return reply(404, { error: "Enquiry not found" });
-      return reply(
+      if (enquiry.length !== 1) return respond(404, { error: "Enquiry not found" });
+      return respond(
         200,
         await sendToDevices(null, {
           id: body.enquiry_id,
@@ -137,8 +162,8 @@ Deno.serve(async (req: Request) => {
 
     if (!isInternal && body.action === "test") {
       const userId = await authorisedAdminUser(auth);
-      if (!userId) return reply(403, { error: "Administrator access required" });
-      return reply(
+      if (!userId) return respond(403, { error: "Administrator access required" });
+      return respond(
         200,
         await sendToDevices(userId, {
           id: `test-${crypto.randomUUID()}`,
@@ -146,12 +171,12 @@ Deno.serve(async (req: Request) => {
         }),
       );
     }
-    return reply(403, { error: "Forbidden" });
+    return respond(403, { error: "Forbidden" });
   } catch (error) {
     console.error(
       "GOODSPOTLESS push server error",
       error instanceof Error ? error.message : "unknown",
     );
-    return reply(503, { error: "Push temporarily unavailable" });
+    return respond(503, { error: "Push temporarily unavailable" });
   }
 });
