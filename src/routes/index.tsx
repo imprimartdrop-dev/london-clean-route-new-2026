@@ -53,22 +53,23 @@ function BeforeAfter() {
       { at: 1780, value: 82 },
       { at: 2660, value: 50 },
     ];
+    const finalPoint = points[points.length - 1]!;
     const observer = new IntersectionObserver(([entry]) => {
       if (!entry?.isIntersecting || introPlayed.current) return;
       introPlayed.current = true;
       observer.disconnect();
       const startedAt = performance.now();
       const animate = (now: number) => {
-        const elapsed = Math.min(points[points.length - 1].at, now - startedAt);
-        if (elapsed >= points[points.length - 1].at) {
+        const elapsed = Math.min(finalPoint.at, now - startedAt);
+        if (elapsed >= finalPoint.at) {
           setSplit(50);
           frameRef.current = null;
           return;
         }
         let i = 1;
-        while (i < points.length - 1 && elapsed > points[i].at) i += 1;
-        const from = points[i - 1];
-        const to = points[i];
+        while (i < points.length - 1 && elapsed > points[i]!.at) i += 1;
+        const from = points[i - 1]!;
+        const to = points[i]!;
         const progress = Math.max(0, Math.min(1, (elapsed - from.at) / (to.at - from.at)));
         const eased = (1 - Math.cos(Math.PI * progress)) / 2;
         setSplit(from.value + (to.value - from.value) * eased);
@@ -166,7 +167,9 @@ function QuoteWizard() {
   };
   const chooseExtra = (value: string) => setExtras(prev => prev.includes(value) ? prev.filter(x => x !== value) : [...prev, value]);
   const next = () => {
-    const result = STEP_SCHEMAS[step - 1].safeParse(draft);
+    const schema = STEP_SCHEMAS[step - 1];
+    if (!schema) return;
+    const result = schema.safeParse(draft);
     if (!result.success) {
       const key = result.error.issues[0]?.message as DictKey;
       setError(key?.startsWith("err.") ? t(key) : t("err.required"));
@@ -209,9 +212,10 @@ function QuoteWizard() {
     <div className="lcr-quote-success" role="status">
       <div className="lcr-success-mark"><Check size={30}/></div>
       <p className="eyebrow">{resultKind === "live" ? (lang === "en" ? "REQUEST RECEIVED" : "PEDIDO RECEBIDO") : (lang === "en" ? "DEMONSTRATION COMPLETE" : "DEMONSTRAÇÃO CONCLUÍDA")}</p>
-      <h3 className="mt-4 text-3xl md:text-4xl">{resultKind === "live" ? (lang === "en" ? "Your request has been saved." : "Seu pedido foi registrado.") : t("q.previewDoneTitle")}</h3>
-      <p className="mt-4 text-muted-foreground max-w-xl mx-auto">{resultKind === "live" ? (lang === "en" ? "We will review your request and contact you. No appointment is confirmed yet." : "Vamos analisar seu pedido e entrar em contato. Nenhum agendamento foi confirmado ainda.") : t("q.previewDoneText")}</p>
-      <p className="mt-5 text-xl font-semibold">{reference}</p>
+      <h3 className="mt-4 text-3xl md:text-4xl">{resultKind === "live" ? (lang === "en" ? "Thanks — we've received your enquiry." : "Obrigado! Recebemos seu pedido.") : t("q.previewDoneTitle")}</h3>
+      <p className="mt-4 text-muted-foreground max-w-xl mx-auto">{resultKind === "live" ? (lang === "en" ? "We'll review the cleaning details and your preferred date, then get in touch to discuss the work, availability and price. There's nothing to pay now, and your cleaning appointment isn't booked yet." : "Vamos analisar os detalhes da limpeza e a data que você prefere. Depois, entraremos em contato para conversar sobre o serviço, a disponibilidade e o valor. Você não precisa pagar agora e a limpeza ainda não está agendada.") : t("q.previewDoneText")}</p>
+      <p className="mt-5 text-sm text-muted-foreground">{lang === "en" ? "Your reference" : "Sua referência"}</p>
+      <p className="mt-1 text-xl font-semibold">{reference}</p>
       <button type="button" className="lcr-button mt-7" onClick={() => {setReference("");setDraft(INITIAL);setExtras([]);setLivingRooms(1);setKitchens(1);setPhotos([]);setStep(1);setReview(false);setStartedAt(Date.now());}}>
         {resultKind === "live" ? (lang === "en" ? "Send another enquiry" : "Fazer outro pedido") : t("q.again")} <ArrowRight size={18}/>
       </button>
@@ -311,9 +315,13 @@ function QuoteWizard() {
           <h3 className="mt-7 mb-4 text-2xl md:text-3xl">{t("q.review")}</h3>
           <div className="lcr-review">
             <div><span>{t("q.service")}</span><strong>{serviceChosen?pick(serviceChosen.name,lang):"—"}</strong></div>
-            <div><span>{t("q.homeType")}</span><strong>{t(("q.home."+draft.homeType) as DictKey)} · {draft.bedrooms} {t("q.bedrooms").toLowerCase()}</strong></div>
+            <div><span>{t("q.homeType")}</span><strong>{t(("q.home."+draft.homeType) as DictKey)} · {draft.bedrooms} {t("q.bedrooms").toLowerCase()} · {draft.bathrooms} {t("q.bathrooms").toLowerCase()}</strong></div>
+            <div><span>{lang === "en" ? "Living rooms / kitchens" : "Salas / cozinhas"}</span><strong>{livingRooms} / {kitchens}</strong></div>
+            <div><span>{t("q.frequency")}</span><strong>{t(("q.freq."+draft.frequency) as DictKey)}</strong></div>
             <div><span>{t("q.postcode")}</span><strong>{normalisePostcode(draft.postcode)}</strong></div>
             <div><span>{t("q.date")}</span><strong>{draft.date}</strong></div>
+            <div><span>{t("q.window")}</span><strong>{t(("q.win."+draft.timeWindow) as DictKey)}</strong></div>
+            {extras.length > 0 && <div><span>{lang === "en" ? "Additional services" : "Serviços extras"}</span><strong>{extras.map(id => { const extra = EXTRAS.find(item => item.id === id); return extra ? (lang === "en" ? extra.en : extra.pt) : id; }).join(", ")}</strong></div>}
             <div><span>{t("q.name")}</span><strong>{draft.name}</strong></div>
           </div>
           <p className="mt-5 text-sm text-muted-foreground">{enquiryService.mode === "live"

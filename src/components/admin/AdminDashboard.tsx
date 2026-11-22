@@ -42,7 +42,10 @@ import {
   pushSupported,
   testAdminPush,
 } from "../../lib/admin/admin-push";
-import { createWhatsAppDraftLink, type ReplyIntent } from "../../lib/automations/whatsapp";
+import {
+  createWhatsAppDraftLink, extraLabel, formatUkDate, frequencyLabel,
+  parseEnquiryNotes, propertyLabel, serviceLabel, timeLabel, type ReplyIntent,
+} from "../../lib/automations/whatsapp";
 
 type Pane =
   "overview" | "enquiries" | "clients" | "properties" | "staff" | "visits" | "finance" | "partners";
@@ -242,24 +245,91 @@ const humanDate = (value: unknown) =>
 const total = (rows: RecordRow[], field: string) =>
   rows.reduce((n, row) => n + Number(row[field] || 0), 0);
 
+const optionalNumber = (value: unknown): number | undefined =>
+  value == null || value === "" || !Number.isFinite(Number(value)) ? undefined : Number(value);
+
 /** Opens a reviewable WhatsApp draft only; the administrator must press Send. */
-function enquiryWhatsAppDraft(row: RecordRow): string | null {
-  const price = Number(row.quote_price_pence);
+function enquiryWhatsAppDraft(row: RecordRow, override?: ReplyIntent): string | null {
+  const price = Number(row["quote_price_pence"]);
   const hasQuote = Number.isSafeInteger(price) && price > 0;
-  const intent: ReplyIntent =
+  const confirmedDate = string(row["confirmed_date"]).slice(0, 10);
+  const confirmedTime = string(row["confirmed_time"]).slice(0, 5);
+  const intent: ReplyIntent = override ?? (
     row.status === "declined" ? "declined"
     : row.status === "quoted" && hasQuote ? "quoted"
-    : row.status === "new" ? "ask"
-    : "accepted";
+    : row.status === "booked" && confirmedDate && confirmedTime ? "booked"
+    : row.status === "new" ? "received"
+    : "accepted");
+  const details = parseEnquiryNotes(row["notes"]);
   return createWhatsAppDraftLink({
     name: string(row.name),
     reference: string(row.reference),
     phone: string(row.phone_e164),
     service: string(row.service),
     postcode: string(row.postcode),
+    homeType: string(row["home_type"]),
+    bedrooms: optionalNumber(row["bedrooms"]),
+    bathrooms: optionalNumber(row["bathrooms"]),
+    livingRooms: details.livingRooms,
+    kitchens: details.kitchens,
+    sizeSqft: optionalNumber(row["size_sqft"]),
+    frequency: string(row["frequency"]),
+    requestedDate: string(row["preferred_date"]),
+    timeWindow: string(row["time_window"]),
+    extras: details.extras,
+    notes: details.description,
     intent,
     ...(intent === "quoted" ? { quotePence: price } : {}),
+    ...(intent === "booked" ? { confirmedDate, confirmedTime } : {}),
   });
+}
+
+/** All fields already supplied by the customer, visible without opening an editor. */
+function EnquiryDetails({ row }: { row: RecordRow }) {
+  const notes = parseEnquiryNotes(row["notes"]);
+  const fields = [
+    ["Serviço solicitado", serviceLabel(row.service)],
+    ["Tipo de imóvel", propertyLabel(row["home_type"])],
+    ["Quartos", string(row["bedrooms"]) || "—"],
+    ["Banheiros", string(row["bathrooms"]) || "—"],
+    ["Salas", notes.livingRooms === undefined ? "Não informado" : String(notes.livingRooms)],
+    ["Cozinhas", notes.kitchens === undefined ? "Não informado" : String(notes.kitchens)],
+    ["Tamanho aproximado", row["size_sqft"] == null ? "Não informado" : `${row["size_sqft"]} sq ft`],
+    ["Frequência", frequencyLabel(row["frequency"])],
+    ["Data preferida para limpeza", row["preferred_date"] ? formatUkDate(row["preferred_date"]) : "—"],
+    ["Horário preferido", timeLabel(row["time_window"])],
+    ["Código postal", string(row.postcode)],
+    ["Serviços extras", notes.extras.length ? notes.extras.map(extraLabel).join(", ") : "Nenhum solicitado"],
+    ["Nome do cliente", string(row.name)],
+    ["Telefone / WhatsApp", string(row.phone_e164)],
+    ["E-mail", string(row.email)],
+    ["Situação", STATUS_OPTIONS.find(item => item.value === row.status)?.label || string(row.status)],
+    ["Valor do orçamento", row["quote_price_pence"] == null ? "A definir" : money(row["quote_price_pence"])],
+  ];
+  return (
+    <div className="mt-4 border-t border-slate-100 pt-4">
+      <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm lg:grid-cols-3">
+        {fields.map(([label, value]) => (
+          <div key={label} className="min-w-0">
+            <p className="text-xs font-medium text-slate-500">{label}</p>
+            <p className="mt-0.5 break-words font-semibold text-slate-800">{value}</p>
+          </div>
+        ))}
+      </div>
+      {notes.description && (
+        <div className="mt-4 rounded-xl bg-slate-50 p-3 text-sm">
+          <p className="font-semibold text-slate-700">Observações do cliente</p>
+          <p className="mt-1 whitespace-pre-wrap break-words text-slate-700">{notes.description}</p>
+        </div>
+      )}
+      {Boolean(row["admin_notes"]) && (
+        <div className="mt-3 rounded-xl bg-amber-50 p-3 text-sm">
+          <p className="font-semibold text-amber-900">Anotações internas (não enviadas ao cliente)</p>
+          <p className="mt-1 whitespace-pre-wrap break-words text-amber-900">{string(row["admin_notes"])}</p>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function titleFor(
@@ -294,7 +364,7 @@ function descriptionFor(
 ): string {
   switch (table) {
     case "enquiries":
-      return `${string(row.service)} · ${string(row.postcode)} · ${string(row.phone_e164)} · ${string(row.status)}`;
+      return `${serviceLabel(row.service)} · ${string(row.postcode)} · ${row["preferred_date"] ? formatUkDate(row["preferred_date"]) : "Data a definir"} · ${timeLabel(row["time_window"])}`;
     case "cleaning_clients":
       return [row.phone, row.email].filter(Boolean).join(" · ");
     case "cleaning_properties": {
@@ -1193,8 +1263,9 @@ export function AdminDashboard() {
                   items.map((row) => (
                     <div
                       key={row.id}
-                      className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-4 py-4 last:border-b-0 sm:px-6"
+                      className="border-b border-slate-100 px-4 py-4 last:border-b-0 sm:px-6"
                     >
+                      <div className="flex flex-wrap items-center justify-between gap-3">
                       <div className="min-w-0 flex-1">
                         <p className="break-words text-sm font-bold sm:text-base">
                           {titleFor(visibleTable, row, rows)}
@@ -1212,7 +1283,18 @@ export function AdminDashboard() {
                             className="rounded-lg border border-emerald-300 px-3 py-2 text-xs font-semibold text-emerald-800"
                             title="Abre uma mensagem pronta; você confere e toca Enviar no WhatsApp"
                           >
-                            WhatsApp · revisar texto
+                            WhatsApp · responder
+                          </a>
+                        )}
+                        {pane === "enquiries" && enquiryWhatsAppDraft(row, "ask") && (
+                          <a
+                            href={enquiryWhatsAppDraft(row, "ask") ?? undefined}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-700"
+                            title="Use somente se precisar de informações adicionais; você ainda precisa enviar a mensagem no WhatsApp"
+                          >
+                            Pedir detalhes
                           </a>
                         )}
                         <button
@@ -1234,6 +1316,8 @@ export function AdminDashboard() {
                           </button>
                         )}
                       </div>
+                      </div>
+                      {pane === "enquiries" && <EnquiryDetails row={row} />}
                     </div>
                   ))
                 ) : (
