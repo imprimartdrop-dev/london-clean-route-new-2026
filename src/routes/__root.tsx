@@ -84,8 +84,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "London Clean Route — Cleaning Services in London" },
-      { name: "description", content: "Domestic and commercial cleaning in North West London." },
+      { title: "GOODSPOTLESS | Cleaning Services in London" },
+      { name: "description", content: "Professional domestic, deep, end of tenancy, office and short-let cleaning throughout London." },
     ],
     links: [
       {
