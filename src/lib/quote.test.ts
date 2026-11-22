@@ -17,6 +17,8 @@ describe("quote rules", () => {
   });
   it("accepts UK and international phones", () => {
     expect(normalisePhone("07700 900123")).toBe("+447700900123");
+    expect(normalisePhone("44 7700 900123")).toBe("+447700900123");
+    expect(normalisePhone("7700 900123")).toBe("+447700900123");
     expect(normalisePhone("+44 (0)20 7946 0018")).toBe("+442079460018");
     expect(normalisePhone("+351 912 345 678")).toBe("+351912345678");
     expect(normalisePhone("123")).toBeNull();
