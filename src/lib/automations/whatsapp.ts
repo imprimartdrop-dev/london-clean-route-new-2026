@@ -105,7 +105,7 @@ export function createCleaningReply(lead: CleaningReply): string {
     case "received":
       return ["*CLEANING REQUEST RECEIVED ✅*", "", ...intro, "", "*Next step:* We'll review the details and get in touch to discuss your cleaning requirements, availability and price. Your clean is not booked yet.", ...tail].join("\n");
     case "accepted":
-      return ["*CLEANING REQUEST ACCEPTED ✅*", "", ...intro, "", "We've reviewed your enquiry and would be happy to discuss the next steps.", "", "*Next step:* We'll contact you to agree the scope of work, price and availability. No appointment is booked yet.", ...tail].join("\n");
+      return ["*CLEANING REQUEST ACCEPTED ✅*", "", ...intro, "", "We've reviewed your enquiry and would be happy to discuss the next steps.", "", "*Next step:* We'll contact you to agree the scope of work, price and availability.", ...tail].join("\n");
     case "ask":
       return ["*A QUICK QUESTION 💬*", "", ...intro, "", "Could you tell us whether any areas need particular attention, and if there are any access arrangements we should know about? This will help us prepare an accurate quote.", ...tail].join("\n");
     case "declined":
