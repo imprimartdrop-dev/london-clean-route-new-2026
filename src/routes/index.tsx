@@ -20,9 +20,9 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Professional home and commercial cleaning, end of tenancy, deep cleans, office cleaning and Airbnb changeovers across Greater London. Explore our services and request a free, no-obligation quote." },
       { property: "og:title", content: "GOODSPOTLESS — Cleaning, thoughtfully done" },
       { property: "og:description", content: "Professional cleaning for London homes, tenants and businesses." },
-      { property: "og:url", content: "https://goodspotless.com/" },
+      { property: "og:url", content: "https://goodspotless.uk/" },
     ],
-    links: [{ rel: "canonical", href: "https://goodspotless.com/" }],
+    links: [{ rel: "canonical", href: "https://goodspotless.uk/" }],
   }),
   component: HomePage,
 });
