@@ -8,6 +8,7 @@ import bedroomPhoto from "../assets/bedroom-shortlet.jpg";
 import { useI18n, pick, type DictKey } from "../lib/i18n";
 import { FAQS, INITIAL_AREAS, SERVICES } from "../lib/content";
 import { quoteSchema, STEP_SCHEMAS, normalisePostcode, validatePhotos } from "../lib/quote";
+import { trackSuccessfulEnquiry } from "../lib/conversions";
 import { enquiryService, TURNSTILE_SITE_KEY } from "../lib/backend/enquiry-service";
 import { TurnstileWidget } from "../components/site/TurnstileWidget";
 import type { QuoteInput } from "../lib/quote";
@@ -197,6 +198,7 @@ function QuoteWizard() {
       if (result.mode === "preview" || result.mode === "live") {
         setResultKind(result.mode);
         setReference(result.reference);
+        if (result.mode === "live") trackSuccessfulEnquiry(result.reference);
       } else {
         setError(t("q.error"));
         if (enquiryService.mode === "live") setCaptchaResetSignal(n => n + 1);
