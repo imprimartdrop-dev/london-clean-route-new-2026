@@ -7,7 +7,8 @@
  */
 const GOOGLE_ADS_TAG_ID = "AW-18581555323";
 const GOOGLE_ADS_CONVERSION = "AW-18581555323/hYcsCJa1qr0dEPuQsJxF";
-const CONSENT_STORAGE_KEY = "lcr-consent";
+// Versioned key: legacy consent was collected before ads were disclosed.
+const CONSENT_STORAGE_KEY = "lcr-ads-consent-v1";
 
 const trackedReferences = new Set<string>();
 const pendingConversions = new Set<string>();
