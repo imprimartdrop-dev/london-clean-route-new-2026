@@ -48,7 +48,7 @@ const en = {
   "footer.tagline": "Considered domestic and commercial cleaning in London.",
   "footer.company": "Company", "footer.legal": "Legal", "footer.privacy": "Privacy & cookies", "footer.admin": "Staff",
   "footer.rights": "Provisional brand. Preview build — not yet trading online.",
-  "cookie.text": "We use only essential storage (language and this choice). No advertising or analytics cookies are set by this site.",
+  "cookie.text": "We use essential storage for language and your cookie choice. With your permission, Google Ads may use advertising cookies to measure completed quote requests. Optional cookies are not required to request a quote.",
   "cookie.accept": "Accept", "cookie.reject": "Essential only", "cookie.more": "Read more",
   // Quote
   "q.title": "Your free cleaning quote", "q.lead": "Four short steps. We reply personally with a clear price.",
@@ -123,7 +123,7 @@ const pt: Record<DictKey, string> = {
   "footer.tagline": "Limpeza residencial e comercial cuidadosa em Londres.",
   "footer.company": "Empresa", "footer.legal": "Legal", "footer.privacy": "Privacidade e cookies", "footer.admin": "Equipe",
   "footer.rights": "Marca provisória. Versão de prévia — ainda sem operação online.",
-  "cookie.text": "Usamos apenas armazenamento essencial (idioma e esta escolha). Este site não define cookies de publicidade ou análise.",
+  "cookie.text": "Usamos armazenamento essencial para idioma e sua escolha de cookies. Com sua permissão, o Google Ads pode usar cookies de publicidade para medir pedidos de orçamento enviados. Você pode pedir orçamento sem aceitar cookies opcionais.",
   "cookie.accept": "Aceitar", "cookie.reject": "Apenas essenciais", "cookie.more": "Saiba mais",
   "q.title": "Seu orçamento de limpeza grátis", "q.lead": "Quatro passos rápidos. Respondemos pessoalmente com um preço claro.",
   "q.pendingTitle": "Integração pendente — modo de prévia",
