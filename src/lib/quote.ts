@@ -22,11 +22,13 @@ export const isValidUkPostcode = (raw: string) => UK_POSTCODE.test(normalisePost
 /** Outward code, e.g. "NW6" from "nw6 2ab". */
 export const outwardCode = (raw: string) => normalisePostcode(raw).split(" ")[0] ?? "";
 
-/** Accepts UK mobiles/landlines (07…, 020…, +44…) and E.164-style international numbers. */
+/** Accepts UK mobiles/landlines (07…, 020…, 44…, +44…, 7…) and international E.164. */
 export function normalisePhone(raw: string): string | null {
   const cleaned = raw.replace(/[\s().-]/g, "").replace(/^\+440/, "+44");
   if (/^00\d+$/.test(cleaned)) return normalisePhone("+" + cleaned.slice(2));
   if (/^0\d{9,10}$/.test(cleaned)) return "+44" + cleaned.slice(1);
+  if (/^44\d{9,10}$/.test(cleaned)) return "+" + cleaned;
+  if (/^7\d{9}$/.test(cleaned)) return "+44" + cleaned;
   if (/^\+44\d{9,10}$/.test(cleaned)) return cleaned;
   if (/^\+[1-9]\d{6,14}$/.test(cleaned)) return cleaned;
   return null;
