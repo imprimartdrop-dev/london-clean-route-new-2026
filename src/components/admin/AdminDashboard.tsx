@@ -42,6 +42,7 @@ import {
   pushSupported,
   testAdminPush,
 } from "../../lib/admin/admin-push";
+import { createWhatsAppDraftLink, type ReplyIntent } from "../../lib/automations/whatsapp";
 
 type Pane =
   "overview" | "enquiries" | "clients" | "properties" | "staff" | "visits" | "finance" | "partners";
@@ -240,6 +241,26 @@ const humanDate = (value: unknown) =>
   value ? new Date(`${String(value).slice(0, 10)}T12:00:00`).toLocaleDateString("pt-BR") : "—";
 const total = (rows: RecordRow[], field: string) =>
   rows.reduce((n, row) => n + Number(row[field] || 0), 0);
+
+/** Opens a reviewable WhatsApp draft only; the administrator must press Send. */
+function enquiryWhatsAppDraft(row: RecordRow): string | null {
+  const price = Number(row.quote_price_pence);
+  const hasQuote = Number.isSafeInteger(price) && price > 0;
+  const intent: ReplyIntent =
+    row.status === "declined" ? "declined"
+    : row.status === "quoted" && hasQuote ? "quoted"
+    : row.status === "new" ? "ask"
+    : "accepted";
+  return createWhatsAppDraftLink({
+    name: string(row.name),
+    reference: string(row.reference),
+    phone: string(row.phone_e164),
+    service: string(row.service),
+    postcode: string(row.postcode),
+    intent,
+    ...(intent === "quoted" ? { quotePence: price } : {}),
+  });
+}
 
 function titleFor(
   table: EditableTable,
@@ -1183,14 +1204,15 @@ export function AdminDashboard() {
                         </p>
                       </div>
                       <div className="flex shrink-0 items-center gap-2">
-                        {pane === "enquiries" && typeof row.phone_e164 === "string" && (
+                        {pane === "enquiries" && enquiryWhatsAppDraft(row) && (
                           <a
-                            href={`https://wa.me/${row.phone_e164.replace(/\D/g, "")}`}
+                            href={enquiryWhatsAppDraft(row) ?? undefined}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="rounded-lg border border-emerald-300 px-3 py-2 text-xs font-semibold text-emerald-800"
+                            title="Abre uma mensagem pronta; você confere e toca Enviar no WhatsApp"
                           >
-                            WhatsApp
+                            WhatsApp · revisar texto
                           </a>
                         )}
                         <button
