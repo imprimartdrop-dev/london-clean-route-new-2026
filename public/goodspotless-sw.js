@@ -15,6 +15,9 @@ self.addEventListener("push", (event) => {
       badge: "/goodspotless-icon-192.png",
       tag: typeof details.id === "string" ? `goodspotless-${details.id}` : "goodspotless-new-client",
       renotify: true,
+      // iOS normally plays its default alert; keep the push explicitly non-silent.
+      // The device still controls sound, Focus and haptics on the lock screen.
+      silent: false,
       vibrate: [220, 120, 220],
       data: { url: "/admin" },
     }),
