@@ -202,7 +202,8 @@ function QuoteWizard() {
         setReference(result.reference);
         if (result.mode === "live") trackSuccessfulEnquiry(result.reference);
       } else {
-        setError(t("q.error"));
+        const messages = { validation: ["Check your details and try again.", "Confira seus dados e tente novamente."], rate_limited: ["Please wait before trying again.", "Aguarde antes de tentar novamente."], security: ["Security verification failed. Please retry.", "A verificação de segurança falhou. Tente novamente."], network: ["Could not connect to the server. Check your connection.", "Não foi possível conectar ao servidor. Verifique sua conexão."], configuration: ["The form is temporarily unavailable.", "O formulário está temporariamente indisponível."], unavailable: ["The server could not confirm your request. Please contact us before resubmitting.", "O servidor não confirmou seu pedido. Entre em contato antes de reenviar."] };
+        setError(messages[result.code][lang === "en" ? 0 : 1]);
         if (enquiryService.mode === "live") setCaptchaResetSignal(n => n + 1);
       }
     } catch {
