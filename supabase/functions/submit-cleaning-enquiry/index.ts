@@ -31,10 +31,8 @@ function normalizePostcode(raw: string) {
   return c.length>3?c.slice(0,-3)+" "+c.slice(-3):c;
 }
 function normalizePhone(raw:string) {
-  const s=raw.replace(/[\s().-]/g,"").replace(/^\+440/,"+44");
-  if(/^00\d+$/.test(s)) return normalizePhone("+"+s.slice(2));
-  if(/^0\d{9,10}$/.test(s)) return "+44"+s.slice(1);
-  return /^\+[1-9]\d{6,14}$/.test(s)?s:null;
+  const cleaned = raw.replace(/[\s().-]/g, "");
+  return /^\+?[0-9]{7,17}$/.test(cleaned) ? cleaned : null;
 }
 function isoValid(value: string) {
   if(!/^\d{4}-\d{2}-\d{2}$/.test(value))return false;
