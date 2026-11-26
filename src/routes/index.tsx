@@ -451,7 +451,7 @@ function HomePage() {
       </section>
 
       <a
-        href={"https://wa.me/447999873253?text=" + encodeURIComponent(lang === "en" ? "Hello GoodSpotless! I would like a quote for cleaning services." : "Olá, GoodSpotless! Gostaria de um orçamento de limpeza.")}
+        href={"https://wa.me/447999873253?text=" + encodeURIComponent("Hello GoodSpotless! I would like a quote for cleaning services.")}
         target="_blank"
         rel="noopener noreferrer"
         aria-label={lang === "en" ? "Chat with GoodSpotless on WhatsApp (opens a new tab)" : "Fale com a GoodSpotless pelo WhatsApp (abre nova aba)"}
