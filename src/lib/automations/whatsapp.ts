@@ -5,7 +5,7 @@
  *
  * No customer data is stored here. Do not import CWX/business credentials.
  */
-import { normalisePhone } from "../quote";
+
 
 export type ReplyIntent = "received" | "accepted" | "ask" | "declined" | "quoted" | "booked";
 export type CleaningReply = {
@@ -123,7 +123,9 @@ export function createCleaningReply(lead: CleaningReply): string {
 
 /** A direct WhatsApp link that opens a draft. It does not send a message. */
 export function createWhatsAppDraftLink(lead: CleaningReply): string | null {
-  const phone = normalisePhone(lead.phone);
+  const raw = lead.phone.replace(/[\s().-]/g, "");
+  const phone = raw.startsWith("00") ? "+" + raw.slice(2) : raw;
+  if (!/^\+[1-9]\d{6,14}$/.test(phone)) return null;
   if (!phone) return null;
   const draft = createCleaningReply(lead);
   return "https://api.whatsapp.com/send?phone=" + phone.slice(1) + "&text=" + encodeURIComponent(draft);
