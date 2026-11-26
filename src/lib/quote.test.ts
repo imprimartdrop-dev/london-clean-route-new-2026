@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatReference, isValidUkPostcode, looksAutomated, normalisePhone, outwardCode, quoteSchema, validatePhotos } from "./quote";
+import { acceptsContactPhone, formatReference, isValidUkPostcode, looksAutomated, normalisePhone, outwardCode, quoteSchema, validatePhotos } from "./quote";
 
 const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
 const valid = { service: "deep-cleaning", homeType: "flat", bedrooms: 2, bathrooms: 1, sizeSqft: "", frequency: "once", postcode: "nw6 2ab", date: tomorrow, timeWindow: "morning", notes: "", name: "Jane Smith", phone: "07700 900123", email: "jane@example.co.uk", privacyAccepted: true, marketingOptIn: false, company: "" };
@@ -22,6 +22,10 @@ describe("quote rules", () => {
     expect(normalisePhone("+44 (0)20 7946 0018")).toBe("+442079460018");
     expect(normalisePhone("+351 912 345 678")).toBe("+351912345678");
     expect(normalisePhone("123")).toBeNull();
+  });
+  it("accepts local and international contact numbers", () => {
+    for (const phone of ["11987654321", "5511987654321", "+55 (11) 98765-4321", "98765-4321", "07700 900123", "447700900123"]) expect(acceptsContactPhone(phone)).toBe(true);
+    expect(acceptsContactPhone("abc")).toBe(false);
   });
   it("requires privacy acknowledgement but marketing is optional", () => {
     expect(quoteSchema.safeParse(valid).success).toBe(true);
