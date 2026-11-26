@@ -4,7 +4,7 @@ import { createCleaningReply, createWhatsAppDraftLink, parseEnquiryNotes } from 
 const enquiry = {
   name: "Test Client",
   reference: "LCR-1234",
-  phone: "07700 900123",
+  phone: "+447700900123",
   service: "deep-cleaning",
   postcode: "SW1A 1AA",
 } as const;
