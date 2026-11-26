@@ -34,6 +34,10 @@ export function normalisePhone(raw: string): string | null {
   return null;
 }
 
+export function acceptsContactPhone(raw: string): boolean {
+  return /^\+?[0-9]{7,17}$/.test(raw.replace(/[\s().-]/g, ""));
+}
+
 function todayIso(): string {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
@@ -58,7 +62,7 @@ export const step2Schema = z.object({
 export const step3Schema = z.object({ notes: z.string().trim().max(1000, "err.tooLong").optional().or(z.literal("")) });
 export const step4Schema = z.object({
   name: z.string().trim().min(2, "err.name").max(100, "err.tooLong"),
-  phone: z.string().trim().min(1, req).refine((p) => normalisePhone(p) !== null, "err.phone"),
+  phone: z.string().trim().min(1, req).refine((p) => acceptsContactPhone(p), "err.phone"),
   email: z.string().trim().min(1, req).email("err.email").max(255, "err.tooLong"),
   privacyAccepted: z.literal(true, { errorMap: () => ({ message: "err.privacy" }) }),
   marketingOptIn: z.boolean(),
