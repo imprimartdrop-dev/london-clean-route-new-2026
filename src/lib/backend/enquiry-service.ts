@@ -9,9 +9,9 @@ import type { EnquiryService, SubmitResult } from "./types";
 const GOODSPOTLESS_ENDPOINT =
   "https://hrypzfgvjlniuhnglmzm.supabase.co/functions/v1/submit-cleaning-enquiry";
 export const TURNSTILE_SITE_KEY =
-  (import.meta.env["VITE_GOODSPOTLESS_TURNSTILE_SITE_KEY"] ?? "").trim();
+  (import.meta.env.VITE_GOODSPOTLESS_TURNSTILE_SITE_KEY ?? "").trim();
 const liveConfigured =
-  import.meta.env["VITE_GOODSPOTLESS_LIVE"] === "true" &&
+  import.meta.env.VITE_GOODSPOTLESS_LIVE === "true" &&
   TURNSTILE_SITE_KEY.length > 0;
 
 let previewSeq = 0;
