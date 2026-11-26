@@ -76,15 +76,15 @@ async function rest<T>(path:string,opts:RequestInit={}):Promise<T>{
   return (body?JSON.parse(body):undefined) as T;
 }
 const corsHeaders = (origin:string|null)=>{
-  const allowed=Deno.env.get("PUBLIC_SITE_ORIGIN");
-  if(!allowed||!origin||origin!==allowed)return null;
+  const allowed = new Set(["https://goodspotless.uk", "https://www.goodspotless.uk", "https://goodspotless.imprimartdrop.workers.dev"]);
+  if(!origin || !allowed.has(origin)) return null;
   return {"Access-Control-Allow-Origin":origin,"Access-Control-Allow-Methods":"POST,OPTIONS",
     "Access-Control-Allow-Headers":"content-type","Vary":"Origin"};
 };
 function reply(status:number, data:Record<string,unknown>,headers:Record<string,string>={}) {
   return new Response(JSON.stringify(data),{status,headers:{"Content-Type":"application/json",...headers}});
 }
-async function verifyCaptcha(token:string, ip:string):Promise<boolean> {
+async function verifyCaptcha(token:string, ip:string, origin:string):Promise<boolean> {
   if(!token||token.length>3000)return false;
   const secret=required("TURNSTILE_SECRET_KEY");
   const form=new FormData();
@@ -94,7 +94,7 @@ async function verifyCaptcha(token:string, ip:string):Promise<boolean> {
   if(!response.ok)return false;
   const json=await response.json() as {success?:boolean;hostname?:string;action?:string};
   // Fail closed unless Cloudflare verified this exact public form and hostname.
-  const expectedHost=required("TURNSTILE_EXPECTED_HOSTNAME");
+  const expectedHost=new URL(origin).hostname;
   return json.success===true &&
     json.hostname===expectedHost &&
     json.action==="cleaning_enquiry";
@@ -144,7 +144,7 @@ Deno.serve(async(req:Request)=>{
     const input=JSON.parse(body) as Incoming;
     if(!input||typeof input!=="object"||Array.isArray(input))return reply(400,{error:"Invalid enquiry"},cors);
     const ip=(req.headers.get("CF-Connecting-IP")||req.headers.get("X-Forwarded-For")||"").split(",")[0].trim();
-    if(!await verifyCaptcha(text(input.captchaToken,3000),ip))return reply(403,{error:"Verification unsuccessful"},cors);
+    if(!await verifyCaptcha(text(input.captchaToken,3000),ip,origin!))return reply(403,{error:"Verification unsuccessful"},cors);
     const data=parsePayload(input);
     if(!data)return reply(422,{error:"Please check your details"},cors);
     // TODO: implement an atomic per-IP rate limiter and customer consent retention
