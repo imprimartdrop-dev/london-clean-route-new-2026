@@ -36,7 +36,7 @@ export interface QuoteEvent { id: string; enquiryId: string; type: QuoteEventTyp
 export type SubmitResult =
   | { mode: "preview"; reference: string; delivered: false }
   | { mode: "live"; reference: string; delivered: true }
-  | { mode: "error"; code: "validation" | "rate_limited" | "unavailable" };
+  | { mode: "error"; code: "validation" | "rate_limited" | "unavailable" | "security" | "network" | "configuration" };
 
 /** Every implementation must run sensitive work server-side (createServerFn). */
 export interface EnquiryService {
