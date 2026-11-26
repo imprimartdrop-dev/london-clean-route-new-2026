@@ -450,6 +450,18 @@ function HomePage() {
         </div>
       </section>
 
+      <a
+        href={"https://wa.me/447999873253?text=" + encodeURIComponent(lang === "en" ? "Hello GoodSpotless! I would like a quote for cleaning services." : "Olá, GoodSpotless! Gostaria de um orçamento de limpeza.")}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={lang === "en" ? "Chat with GoodSpotless on WhatsApp (opens a new tab)" : "Fale com a GoodSpotless pelo WhatsApp (abre nova aba)"}
+        className="fixed right-4 z-40 inline-flex h-14 items-center justify-center gap-2 rounded-full bg-[#176b3a] px-4 text-sm font-semibold text-white shadow-lg hover:bg-[#12552e] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#176b3a] sm:right-6"
+        style={{ bottom: "calc(1rem + env(safe-area-inset-bottom, 0px))" }}
+      >
+        <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2a9.9 9.9 0 0 0-8.57 14.86L2 22l5.28-1.39A9.94 9.94 0 1 0 12.04 2Zm0 18.07a8.1 8.1 0 0 1-4.14-1.13l-.3-.18-3.13.82.84-3.05-.2-.31a8.14 8.14 0 1 1 6.93 3.85Zm4.46-6.1c-.25-.12-1.47-.72-1.7-.8-.23-.09-.4-.13-.56.12-.17.25-.64.8-.79.96-.14.17-.29.19-.54.06-.25-.12-1.05-.39-2-1.23-.74-.66-1.24-1.48-1.39-1.73-.14-.25-.01-.38.11-.5l.37-.43c.12-.15.16-.25.25-.42.08-.16.04-.31-.02-.43-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.16 0-.43.06-.66.31-.23.25-.87.85-.87 2.07s.89 2.4 1.01 2.57c.13.16 1.75 2.67 4.24 3.74.59.25 1.05.4 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.2-.58.2-1.08.14-1.18-.06-.1-.22-.16-.47-.28Z"/></svg>
+        <span className="hidden sm:inline">{lang === "en" ? "Chat on WhatsApp" : "Fale pelo WhatsApp"}</span>
+      </a>
+
       <section id="quote-end" className="lcr-quote-section lcr-quote-section--final" aria-label={lang === "en" ? "Request your cleaning quote" : "Peça seu orçamento de limpeza"}>
         <div className="container-page"><QuoteWizard/></div>
       </section>
