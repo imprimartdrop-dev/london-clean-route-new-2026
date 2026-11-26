@@ -19,6 +19,7 @@ let previewSeq = 0;
 const previewAdapter: EnquiryService = {
   mode: "preview",
   async submitEnquiry(input, meta): Promise<SubmitResult> {
+    if (typeof window !== "undefined" && ["goodspotless.uk", "www.goodspotless.uk"].includes(window.location.hostname)) return { mode: "error", code: "configuration" };
     if (!quoteSchema.safeParse(input).success) return { mode: "error", code: "validation" };
     if (looksAutomated(meta.startedAt, Date.now(), input.company)) return { mode: "error", code: "rate_limited" };
     await new Promise((r) => setTimeout(r, 700));
@@ -60,5 +61,5 @@ const liveAdapter: EnquiryService = {
 };
 
 export const enquiryService: EnquiryService =
-  liveConfigured ? liveAdapter : (typeof window !== "undefined" && ["goodspotless.uk", "www.goodspotless.uk"].includes(window.location.hostname) ? { mode: "live", async submitEnquiry() { return { mode: "error", code: "configuration" }; } } : previewAdapter);
+  liveConfigured ? liveAdapter : previewAdapter;
 export const INTEGRATION_PENDING = !liveConfigured;
