@@ -8,11 +8,12 @@ import type { EnquiryService, SubmitResult } from "./types";
 
 const GOODSPOTLESS_ENDPOINT =
   "https://hrypzfgvjlniuhnglmzm.supabase.co/functions/v1/submit-cleaning-enquiry";
+// Public site key, not the server-side Turnstile secret.
 export const TURNSTILE_SITE_KEY =
-  (import.meta.env.VITE_GOODSPOTLESS_TURNSTILE_SITE_KEY ?? "").trim();
-const liveConfigured =
-  import.meta.env.VITE_GOODSPOTLESS_LIVE === "true" &&
-  TURNSTILE_SITE_KEY.length > 0;
+  (import.meta.env.VITE_GOODSPOTLESS_TURNSTILE_SITE_KEY || "0x4AAAAAAGL0m2CEgbvz-Leb").trim();
+// Production build uses the real endpoint. Development remains a preview.
+// Server independently enforces the allowed origin and verifies Turnstile.
+const liveConfigured = import.meta.env.PROD && TURNSTILE_SITE_KEY.length > 0;
 
 let previewSeq = 0;
 
