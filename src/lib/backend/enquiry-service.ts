@@ -33,7 +33,8 @@ const liveAdapter: EnquiryService = {
     if (!quoteSchema.safeParse(input).success) return { mode: "error", code: "validation" };
     if (looksAutomated(meta.startedAt, Date.now(), input.company)) return { mode: "error", code: "rate_limited" };
     // The photos endpoint is not ready. Never silently discard customer attachments.
-    if (meta.photos.length || !meta.captchaToken) return { mode: "error", code: "unavailable" };
+    if (meta.photos.length) return { mode: "error", code: "validation" };
+    if (!meta.captchaToken) return { mode: "error", code: "security" };
 
     try {
       const response = await fetch(GOODSPOTLESS_ENDPOINT, {
@@ -42,6 +43,8 @@ const liveAdapter: EnquiryService = {
         body: JSON.stringify({ ...input, captchaToken: meta.captchaToken }),
       });
       if (response.status === 429) return { mode: "error", code: "rate_limited" };
+      if (response.status === 403) return { mode: "error", code: "security" };
+      if (response.status === 400 || response.status === 422 || response.status === 413) return { mode: "error", code: "validation" };
       if (!response.ok) return { mode: "error", code: "unavailable" };
       const data: unknown = await response.json();
       if (typeof data === "object" && data !== null && "stored" in data &&
@@ -51,11 +54,11 @@ const liveAdapter: EnquiryService = {
       }
       return { mode: "error", code: "unavailable" };
     } catch {
-      return { mode: "error", code: "unavailable" };
+      return { mode: "error", code: "network" };
     }
   },
 };
 
 export const enquiryService: EnquiryService =
-  liveConfigured ? liveAdapter : previewAdapter;
+  liveConfigured ? liveAdapter : (typeof window !== "undefined" && ["goodspotless.uk", "www.goodspotless.uk"].includes(window.location.hostname) ? { mode: "live", async submitEnquiry() { return { mode: "error", code: "configuration" }; } } : previewAdapter);
 export const INTEGRATION_PENDING = !liveConfigured;
