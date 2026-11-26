@@ -309,7 +309,7 @@ function QuoteWizard() {
           </div>}
           {step === 4 && <div className="space-y-4">
             <label className="block"><span className="lcr-label">{t("q.name")}</span><input className={inputClass} autoComplete="name" value={draft.name} onChange={e=>change("name",e.target.value)}/></label>
-            <label className="block"><span className="lcr-label">{t("q.phone")}</span><input className={inputClass} autoComplete="tel" type="tel" placeholder="+44 7..." value={draft.phone} onChange={e=>change("phone",e.target.value)}/><span className="block text-xs text-muted-foreground mt-1">{t("q.phoneHint")}</span></label>
+            <label className="block"><span className="lcr-label">{t("q.phone")}</span><input className={inputClass} autoComplete="tel" type="tel" placeholder="Phone / Telefone" value={draft.phone} onChange={e=>change("phone",e.target.value)}/><span className="block text-xs text-muted-foreground mt-1">{t("q.phoneHint")}</span></label>
             <label className="block"><span className="lcr-label">{t("q.email")}</span><input className={inputClass} autoComplete="email" type="email" value={draft.email} onChange={e=>change("email",e.target.value)}/></label>
             <label className="lcr-check"><input type="checkbox" checked={draft.privacyAccepted} onChange={e=>change("privacyAccepted",e.target.checked)}/><span>{t("q.privacy")}</span></label>
             <label className="lcr-check"><input type="checkbox" checked={draft.marketingOptIn} onChange={e=>change("marketingOptIn",e.target.checked)}/><span>{t("q.marketing")}</span></label>
