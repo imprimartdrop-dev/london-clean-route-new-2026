@@ -22,7 +22,7 @@ function ensureScript(): Promise<void> {
     script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
     script.async = true;
     script.onload = () => window.turnstile ? resolve() : reject(new Error("Turnstile unavailable"));
-    script.onerror = () => reject(new Error("Turnstile could not load"));
+    script.onerror = () => { script.remove(); reject(new Error("Turnstile could not load")); };
     document.head.appendChild(script);
   }).catch((error) => {
     scriptLoading = null; // Permit retry after network error.
