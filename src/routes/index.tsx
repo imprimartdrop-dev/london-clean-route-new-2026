@@ -147,10 +147,11 @@ const EXTRAS = [
   { id: "ironing", en: "Ironing", pt: "Passar roupas" },
 ];
 
-function QuoteWizard() {
+function QuoteWizard({ initialPostcode = "" }: { initialPostcode?: string }) {
   const { lang, t } = useI18n();
   const [step, setStep] = useState(1);
   const [draft, setDraft] = useState<Draft>(INITIAL);
+  useEffect(() => { if (initialPostcode) setDraft(prev => ({...prev, postcode: initialPostcode})); }, [initialPostcode]);
   const [extras, setExtras] = useState<string[]>([]);
   const [livingRooms, setLivingRooms] = useState(1);
   const [kitchens, setKitchens] = useState(1);
@@ -355,23 +356,25 @@ function QuoteWizard() {
 
 function HomePage() {
   const { lang, t } = useI18n();
+  const [postcode,setPostcode] = useState("");
+  const [quotePostcode,setQuotePostcode] = useState("");
   return (
     <>
-      <section className="lcr-hero">
-        <div className="lcr-hero__image" style={{ backgroundImage: "url(" + livingPhoto + ")" }} aria-hidden="true" />
-        <div className="lcr-hero__shade" aria-hidden="true"/>
-        <div className="container-page relative z-10 flex items-center min-h-[620px] py-24 md:py-32">
-          <div className="max-w-[740px] animate-rise">
-            <div className="lcr-hero__eyebrow"><span className="lcr-dot"/>{lang==="en"?"ACROSS LONDON · HOME & COMMERCIAL CLEANING":"TODA LONDRES · LIMPEZA RESIDENCIAL E COMERCIAL"}</div>
-            <h1 className="lcr-hero__title">{lang==="en"?"Professional home and office cleaning in London.":"Limpeza profissional de casas e escritórios em Londres."}</h1>
-            <p className="lcr-hero__lead">{lang==="en"?"Enjoy a spotless space and more time for yourself. Regular, deep and one-off cleaning tailored to your needs. Request a free, no-obligation quote.":"Aproveite um ambiente limpo e mais tempo para você. Limpeza regular, profunda ou avulsa. Peça um orçamento gratuito e sem compromisso."}</p>
-            <div className="mt-9 flex flex-wrap items-center gap-4">
-              <a className="lcr-button lcr-button--cream" href="#quote">{t("cta.quote")} <ArrowUpRight size={19}/></a>
-              <a href="#services" className="lcr-hero__secondary">{lang==="en"?"Explore our services":"Conheça os serviços"} <ArrowRight size={17}/></a>
-            </div>
-          </div>
+      <section className="gs-hero">
+        <img className="gs-hero-photo" src={livingPhoto} alt={lang==="en"?"Illustrative London home cleaning":"Imagem ilustrativa de limpeza residencial"}/>
+        <div className="container-page gs-hero-copy">
+          <p className="gs-gold">{lang==="en"?"PROFESSIONAL CLEANING ACROSS LONDON":"LIMPEZA PROFISSIONAL EM TODA LONDRES"}</p>
+          <h1>{lang==="en"?"A spotless home.":"Uma casa impecável."}<br/><span>{lang==="en"?"More time for you.":"Mais tempo para você."}</span></h1>
+          <p>{lang==="en"?"Professional home and office cleaning tailored to your needs. Simple pricing and hassle-free quotes.":"Limpeza residencial e comercial adaptada às suas necessidades. Preços claros e orçamento sem complicação."}</p>
+          <p className="gs-price">£19.90 <small>{lang==="en"?"from / hour · regular cleaning, minimum 3 hours":"a partir de / hora · limpeza regular, mínimo 3 horas"}</small></p>
+          <form className="gs-postcode" onSubmit={e=>{e.preventDefault();setQuotePostcode(normalisePostcode(postcode));document.getElementById("quote")?.scrollIntoView({behavior:"smooth"});}}>
+            <h2>{lang==="en"?"Find your local cleaner":"Encontre seu profissional"}</h2>
+            <input required autoComplete="postal-code" aria-label={lang==="en"?"Postcode":"Código postal"} placeholder={lang==="en"?"Enter your postcode":"Informe seu postcode"} value={postcode} onChange={e=>setPostcode(e.target.value)}/>
+            <button className="lcr-button" type="submit">{lang==="en"?"Get My Free Quote":"Pedir orçamento gratuito"} <ArrowRight size={18}/></button>
+            <small>{lang==="en"?"No obligation · Quick and easy":"Sem compromisso · Rápido e fácil"}</small>
+          </form>
+          <a className="gs-whatsapp" onClick={()=>trackQuoteInteraction("whatsapp_click")} href="https://wa.me/447999873253" target="_blank" rel="noopener noreferrer">{lang==="en"?"Chat with us on WhatsApp":"Fale conosco pelo WhatsApp"}</a>
         </div>
-        <div className="lcr-hero__foot"><span>{lang==="en"?"Care in every corner.":"Cuidado em cada detalhe."}</span><span>01 — 04</span></div>
       </section>
 
       <section className="lcr-intro-band">
@@ -394,7 +397,7 @@ function HomePage() {
       </section>
 
       <section id="quote" className="lcr-quote-section">
-        <div className="container-page"><QuoteWizard/></div>
+        <div className="container-page"><QuoteWizard initialPostcode={quotePostcode}/></div>
       </section>
 
       <section id="services" className="lcr-section container-page">
@@ -404,7 +407,7 @@ function HomePage() {
         </div>
         <div className="lcr-service-grid">
           {SERVICES.map((s,i)=><a href="#quote" className="lcr-service-card" key={s.slug}>
-            <span className="lcr-service-number">0{i+1}</span>
+            <img className="gs-service-photo" src={i===3?bedroomPhoto:i===0?livingPhoto:roomAfter} alt="" loading="lazy"/><strong className="gs-card-price">{["£19.90/h","£26.90/h","£149","", "£22.90/h",""][i] ? (lang==="en"?"From ":"A partir de ")+["£19.90/h","£26.90/h","£149","","£22.90/h",""][i] : (lang==="en"?"Free quote":"Orçamento gratuito")}</strong>
             <div className="lcr-service-card__icon">{i===0?<HomeIcon size={28}/>:i===3?<Clock3 size={28}/>:<Sparkles size={28}/>}</div>
             <h3>{pick(s.name,lang)}</h3>
             <p>{pick(s.intro,lang)}</p>
