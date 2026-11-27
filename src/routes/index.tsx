@@ -356,6 +356,31 @@ function HomePage() {
   const { lang, t } = useI18n();
   return (
     <>
+      <section className="lcr-hero">
+        <div className="lcr-hero__image" style={{ backgroundImage: "url(" + livingPhoto + ")" }} aria-hidden="true" />
+        <div className="lcr-hero__shade" aria-hidden="true"/>
+        <div className="container-page relative z-10 flex items-center min-h-[620px] py-24 md:py-32">
+          <div className="max-w-[740px] animate-rise">
+            <div className="lcr-hero__eyebrow"><span className="lcr-dot"/>{lang==="en"?"ACROSS LONDON · HOME & COMMERCIAL CLEANING":"TODA LONDRES · LIMPEZA RESIDENCIAL E COMERCIAL"}</div>
+            <h1 className="lcr-hero__title">{lang==="en"?"Professional home and office cleaning in London.":"Limpeza profissional de casas e escritórios em Londres."}</h1>
+            <p className="lcr-hero__lead">{lang==="en"?"Enjoy a spotless space and more time for yourself. Regular, deep and one-off cleaning tailored to your needs. Request a free, no-obligation quote.":"Aproveite um ambiente limpo e mais tempo para você. Limpeza regular, profunda ou avulsa. Peça um orçamento gratuito e sem compromisso."}</p>
+            <div className="mt-9 flex flex-wrap items-center gap-4">
+              <a className="lcr-button lcr-button--cream" href="#quote">{t("cta.quote")} <ArrowUpRight size={19}/></a>
+              <a href="#services" className="lcr-hero__secondary">{lang==="en"?"Explore our services":"Conheça os serviços"} <ArrowRight size={17}/></a>
+            </div>
+          </div>
+        </div>
+        <div className="lcr-hero__foot"><span>{lang==="en"?"Care in every corner.":"Cuidado em cada detalhe."}</span><span>01 — 04</span></div>
+      </section>
+
+      <section className="lcr-intro-band">
+        <div className="container-page grid gap-8 md:grid-cols-3">
+          <div><ShieldCheck size={22}/><span>{lang==="en"?"Carefully considered service":"Atendimento cuidadoso"}</span></div>
+          <div><Sparkles size={22}/><span>{lang==="en"?"A beautifully refreshed space":"Ambientes renovados"}</span></div>
+          <div><MapPin size={22}/><span>{lang==="en"?"Serving all of London":"Atendemos toda Londres"}</span></div>
+        </div>
+      </section>
+
       <section id="difference" className="lcr-section container-page">
         <div className="lcr-section-heading">
           <div><p className="eyebrow">{lang==="en"?"THE DIFFERENCE IS IN THE DETAIL":"A DIFERENÇA ESTÁ NOS DETALHES"}</p>
@@ -369,31 +394,6 @@ function HomePage() {
 
       <section id="quote" className="lcr-quote-section">
         <div className="container-page"><QuoteWizard/></div>
-      </section>
-
-      <section className="lcr-hero">
-        <div className="lcr-hero__image" style={{ backgroundImage: "url(" + livingPhoto + ")" }} aria-hidden="true" />
-        <div className="lcr-hero__shade" aria-hidden="true"/>
-        <div className="container-page relative z-10 flex items-center min-h-[620px] py-24 md:py-32">
-          <div className="max-w-[740px] animate-rise">
-            <div className="lcr-hero__eyebrow"><span className="lcr-dot"/>{lang==="en"?"ACROSS LONDON · HOME & COMMERCIAL CLEANING":"TODA LONDRES · LIMPEZA RESIDENCIAL E COMERCIAL"}</div>
-            <h1 className="lcr-hero__title">{lang==="en"?"A cleaner home. A little more room to breathe.":"Sua casa limpa. Mais tempo para aproveitar."}</h1>
-            <p className="lcr-hero__lead">{lang==="en"?"Thoughtfully delivered cleaning for London homes, workplaces and spaces between chapters. Because the details make all the difference.":"Limpeza feita com atenção para casas, escritórios e imóveis em Londres. Porque cada detalhe faz a diferença."}</p>
-            <div className="mt-9 flex flex-wrap items-center gap-4">
-              <a className="lcr-button lcr-button--cream" href="#quote">{t("cta.quote")} <ArrowUpRight size={19}/></a>
-              <a href="#quote" className="lcr-hero__secondary">{lang==="en"?"Explore our services":"Conheça os serviços"} <ArrowRight size={17}/></a>
-            </div>
-          </div>
-        </div>
-        <div className="lcr-hero__foot"><span>{lang==="en"?"Care in every corner.":"Cuidado em cada detalhe."}</span><span>01 — 04</span></div>
-      </section>
-
-      <section className="lcr-intro-band">
-        <div className="container-page grid gap-8 md:grid-cols-3">
-          <div><ShieldCheck size={22}/><span>{lang==="en"?"Carefully considered service":"Atendimento cuidadoso"}</span></div>
-          <div><Sparkles size={22}/><span>{lang==="en"?"A beautifully refreshed space":"Ambientes renovados"}</span></div>
-          <div><MapPin size={22}/><span>{lang==="en"?"Serving all of London":"Atendemos toda Londres"}</span></div>
-        </div>
       </section>
 
       <section id="services" className="lcr-section container-page">
