@@ -8,7 +8,7 @@ import bedroomPhoto from "../assets/bedroom-shortlet.jpg";
 import { useI18n, pick, type DictKey } from "../lib/i18n";
 import { FAQS, INITIAL_AREAS, SERVICES } from "../lib/content";
 import { quoteSchema, STEP_SCHEMAS, normalisePostcode, validatePhotos } from "../lib/quote";
-import { trackSuccessfulEnquiry } from "../lib/conversions";
+import { trackSuccessfulEnquiry, trackQuoteInteraction } from "../lib/conversions";
 import { enquiryService, TURNSTILE_SITE_KEY } from "../lib/backend/enquiry-service";
 import { TurnstileWidget } from "../components/site/TurnstileWidget";
 import type { QuoteInput } from "../lib/quote";
@@ -179,7 +179,8 @@ function QuoteWizard() {
       return;
     }
     setError("");
-    if (step === 4) { setReview(true); return; }
+    if (step === 4) { trackQuoteInteraction("quote_step_completed", 4); setReview(true); return; }
+    trackQuoteInteraction("quote_step_completed", step);
     setStep(prev => prev + 1);
   };
   const submit = async () => {
@@ -451,6 +452,7 @@ function HomePage() {
       </section>
 
       <a
+        onClick={() => trackQuoteInteraction("whatsapp_click")}
         href={"https://wa.me/447999873253?text=" + encodeURIComponent("Hello GoodSpotless! I would like a quote for cleaning services.")}
         target="_blank"
         rel="noopener noreferrer"
