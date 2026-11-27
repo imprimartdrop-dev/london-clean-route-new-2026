@@ -102,3 +102,10 @@ export function trackSuccessfulEnquiry(reference: string): boolean {
   syncGoogleAdsConsent();
   return true;
 }
+
+export function trackQuoteInteraction(event: "quote_step_completed" | "whatsapp_click", step?: number): void {
+  if (typeof window === "undefined" || !hasAdvertisingConsent()) return;
+  const w = window as GoogleTagWindow;
+  w.dataLayer = w.dataLayer || [];
+  w.dataLayer.push({ event: "goodspotless_" + event, ...(step === undefined ? {} : { step }) });
+}
