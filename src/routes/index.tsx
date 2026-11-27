@@ -1,3 +1,7 @@
+import brandedHero from "../assets/6946F2FD-E78D-44E7-B145-4DC10A11E592.png";
+import tenancyPhoto from "../assets/8E99BFF5-8792-42BE-85B0-B9CB3E0A0D99.png";
+import buildersPhoto from "../assets/0BE17092-01EE-4FD0-8C19-E960D7293714.png";
+import deepPhoto from "../assets/EA4F9977-3A1E-479D-B3AE-425B62C0D7C8.png";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useId, useRef, useState, type PointerEvent } from "react";
 import { ArrowRight, ArrowUpRight, Check, ChevronLeft, ChevronRight, ClipboardCheck, Clock3, Home as HomeIcon, MapPin, ShieldCheck, Sparkles, MoveHorizontal } from "lucide-react";
@@ -361,7 +365,7 @@ function HomePage() {
   return (
     <>
       <section className="gs-hero">
-        <img className="gs-hero-photo" src={livingPhoto} alt={lang==="en"?"Illustrative London home cleaning":"Imagem ilustrativa de limpeza residencial"}/>
+        <img className="gs-hero-photo" src={brandedHero} alt={lang==="en"?"Illustrative London home cleaning":"Imagem ilustrativa de limpeza residencial"}/>
         <div className="container-page gs-hero-copy">
           <p className="gs-gold">{lang==="en"?"PROFESSIONAL CLEANING ACROSS LONDON":"LIMPEZA PROFISSIONAL EM TODA LONDRES"}</p>
           <h1>{lang==="en"?"A spotless home.":"Uma casa impecável."}<br/><span>{lang==="en"?"More time for you.":"Mais tempo para você."}</span></h1>
@@ -407,7 +411,7 @@ function HomePage() {
         </div>
         <div className="lcr-service-grid">
           {SERVICES.map((s,i)=><a href="#quote" className="lcr-service-card" key={s.slug}>
-            <img className="gs-service-photo" src={i===3?bedroomPhoto:i===0?livingPhoto:roomAfter} alt="" loading="lazy"/><strong className="gs-card-price">{["£19.90/h","£26.90/h","£149","", "£22.90/h",""][i] ? (lang==="en"?"From ":"A partir de ")+["£19.90/h","£26.90/h","£149","","£22.90/h",""][i] : (lang==="en"?"Free quote":"Orçamento gratuito")}</strong>
+            <img className="gs-service-photo" src={[livingPhoto,deepPhoto,tenancyPhoto,bedroomPhoto,roomAfter,buildersPhoto][i]} alt="" loading="lazy"/><strong className="gs-card-price">{["£19.90/h","£26.90/h","£149","", "£22.90/h",""][i] ? (lang==="en"?"From ":"A partir de ")+["£19.90/h","£26.90/h","£149","","£22.90/h",""][i] : (lang==="en"?"Free quote":"Orçamento gratuito")}</strong>
             <div className="lcr-service-card__icon">{i===0?<HomeIcon size={28}/>:i===3?<Clock3 size={28}/>:<Sparkles size={28}/>}</div>
             <h3>{pick(s.name,lang)}</h3>
             <p>{pick(s.intro,lang)}</p>
