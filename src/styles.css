@@ -287,3 +287,20 @@ body:has(.gs-hero) .lcr-service-card p {color:#c4c8d0}
 body:has(.gs-hero) .lcr-service-more {color:#ebc568}
 body:has(.gs-hero) .lcr-quote-section input,body:has(.gs-hero) .lcr-quote-section select,body:has(.gs-hero) .lcr-quote-section textarea {color:#102039;background:#fff}
 @media(max-width:640px){body:has(.gs-hero) .lcr-service-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}body:has(.gs-hero) .lcr-service-card {padding:10px}.gs-service-photo{height:110px}.gs-card-price{font-size:1.1rem}}
+
+/* Homepage contrast corrections — 27 November 2026 */
+body:has(.gs-hero) footer {background:#fff!important;color:#102B49!important;--foreground:#102B49;--muted-foreground:#315374;--primary:#102B49;--primary-foreground:#fff;--ink:#102B49;--ink-foreground:#102B49;--border:#d8dfe8}
+body:has(.gs-hero) footer :is(p,a,h2,h3,h4,li,span,small) {color:#102B49!important}
+body:has(.gs-hero) footer a:hover {color:#80601e!important}
+body:has(.gs-hero) #faqs .eyebrow,body:has(.gs-hero) #areas .eyebrow {color:#ebc568}
+body:has(.gs-hero) #faqs summary {color:#fff}
+body:has(.gs-hero) #faqs summary span,body:has(.gs-hero) #areas .lcr-areas svg {color:#ebc568}
+body:has(.gs-hero) #faqs .lcr-faq-item p,body:has(.gs-hero) #areas .lcr-section-heading>p,body:has(.gs-hero) #areas .lcr-areas>span {color:#dce2ec}
+body:has(.gs-hero) #areas .lcr-areas b {color:#fff}
+body:has(.gs-hero) #faqs .lcr-faq-item,body:has(.gs-hero) #areas .lcr-areas>span {border-color:#526078}
+body:has(.gs-hero) header {--foreground:#102B49;--muted-foreground:#315374;--primary:#102B49;--primary-foreground:#fff;color:#102B49}
+body:has(.gs-hero) header button {color:#102B49}
+body:has(.gs-hero) .lcr-quote-card {--foreground:#102B49;--muted-foreground:#475569;--primary:#102B49;--primary-foreground:#fff;color:#102B49}
+body:has(.gs-hero) .lcr-quote-card .lcr-extra {color:#102B49}
+body:has(.gs-hero) .lcr-section-heading>p,body:has(.gs-hero) .lcr-how-step p,body:has(.gs-hero) .lcr-illustration-note {color:#dce2ec}
+body:has(.gs-hero) .lcr-how .lcr-text-link,body:has(.gs-hero) .lcr-how-step>span {color:#ebc568}
